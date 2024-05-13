@@ -116,5 +116,4 @@ public class Requisicao {
     public boolean clienteSentado() {
         return cliente != null;
     }
->>>>>>> 078475f (fix class Requisicao)
 }
