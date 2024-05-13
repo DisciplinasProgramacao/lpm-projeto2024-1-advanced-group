@@ -1,87 +1,120 @@
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Requisicao {
-  private static int contadorId = 1;
-  private Integer idRequisicao;
-  private LocalDateTime dataHoraEntrada;
-  private LocalDateTime dataHoraSaida;
-  private Cliente cliente;
-  private Integer numeroDePessoas;
-  private boolean atendida;
-  private Mesa mesa;
-  private Double conta;
+    private int idRequisicao;
+    private Cliente cliente;
+    private Mesa mesa;
+    private int numPessoas;
+    private LocalDateTime dataHoraEntrada;
+    private LocalDateTime dataHoraSaida;
+    private boolean atendida;
+    private double conta;
+    private List<Pedido> pedidos;
 
-  public Requisicao(Cliente cliente, Integer numeroDePessoas) {
-    this.idRequisicao = contadorId++;
-    this.numeroDePessoas = numeroDePessoas;
-    this.dataHoraEntrada = LocalDateTime.now();
-    this.cliente = cliente;
-    this.atendida = false;
-    this.mesa = null;
-    this.conta = 0.0;
-  }
+    public Requisicao(int idRequisicao, Cliente cliente, Mesa mesa, int numPessoas, LocalDateTime dataHoraEntrada) {
+        this.idRequisicao = idRequisicao;
+        this.cliente = cliente;
+        this.mesa = mesa;
+        this.numPessoas = numPessoas;
+        this.dataHoraEntrada = dataHoraEntrada;
+        this.dataHoraSaida = null;
+        this.atendida = false;
+        this.conta = 0.0;
+        this.pedidos = new ArrayList<>();
+    }
 
-  public Integer getIdRequisicao() {
-    return idRequisicao;
-  }
+    public int getIdRequisicao() {
+        return idRequisicao;
+    }
 
-  public void setIdRequisicao(Integer idRequisicao) {
-    this.idRequisicao = idRequisicao;
-  }
+    public void setIdRequisicao(int idRequisicao) {
+        this.idRequisicao = idRequisicao;
+    }
 
-  public LocalDateTime getDataHoraEntrada() {
-    return dataHoraEntrada;
-  }
+    public Cliente getCliente() {
+        return cliente;
+    }
 
-  public void setDataHoraEntrada(LocalDateTime dataHoraEntrada) {
-    this.dataHoraEntrada = dataHoraEntrada;
-  }
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
+    }
 
-  public LocalDateTime getDataHoraSaida() {
-    return dataHoraSaida;
-  }
+    public Mesa getMesa() {
+        return mesa;
+    }
 
-  public void setDataHoraSaida(LocalDateTime dataHoraSaida) {
-    this.dataHoraSaida = dataHoraSaida;
-  }
+    public void setMesa(Mesa mesa) {
+        this.mesa = mesa;
+    }
 
-  public Cliente getCliente() {
-    return cliente;
-  }
+    public int getNumPessoas() {
+        return numPessoas;
+    }
 
-  public void setCliente(Cliente cliente) {
-    this.cliente = cliente;
-  }
+    public void setNumPessoas(int numPessoas) {
+        this.numPessoas = numPessoas;
+    }
 
-  public Integer getNumeroDePessoas() {
-    return numeroDePessoas;
-  }
+    public LocalDateTime getDataHoraEntrada() {
+        return dataHoraEntrada;
+    }
 
-  public void setNumeroDePessoas(Integer numeroDePessoas) {
-    this.numeroDePessoas = numeroDePessoas;
-  }
+    public void setDataHoraEntrada(LocalDateTime dataHoraEntrada) {
+        this.dataHoraEntrada = dataHoraEntrada;
+    }
 
-  public boolean isAtendida() {
-    return atendida;
-  }
+    public LocalDateTime getDataHoraSaida() {
+        return dataHoraSaida;
+    }
 
-  public void setAtendida(boolean atendida) {
-    this.atendida = atendida;
-  }
+    public void setDataHoraSaida(LocalDateTime dataHoraSaida) {
+        this.dataHoraSaida = dataHoraSaida;
+    }
 
-  public Mesa getMesa() {
-    return mesa;
-  }
+    public boolean isAtendida() {
+        return atendida;
+    }
 
-  public void setMesa(Mesa mesa) {
-    this.mesa = mesa;
-  }
+    public void setAtendida(boolean atendida) {
+        this.atendida = atendida;
+    }
 
-  public Double getConta() {
-    return conta;
-  }
+    public double getConta() {
+        return conta;
+    }
 
-  public void setConta(Double conta) {
-    this.conta = conta;
-  }
+    public void setConta(double conta) {
+        this.conta = conta;
+    }
+
+    public List<Pedido> getPedidos() {
+        return pedidos;
+    }
+
+    public void adicionarPedido(Pedido pedido) {
+        pedidos.add(pedido);
+    }
+
+    public long calcularDuracao() {
+        if (dataHoraSaida != null) {
+            Duration duracao = Duration.between(dataHoraEntrada, dataHoraSaida);
+            return duracao.toMinutes();
+        } else {
+            return 0;
+        }
+    }
+
+    public void encerrarRequisicao() {
+        if (!atendida) {
+            atendida = true;
+            dataHoraSaida = LocalDateTime.now();
+        }
+    }
+    public boolean clienteSentado() {
+        return cliente != null;
+    }
+>>>>>>> 078475f (fix class Requisicao)
 }
