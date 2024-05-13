@@ -1,5 +1,6 @@
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -55,29 +56,14 @@ public class Restaurante {
     }
   }
 
-  public void printListaRequisicoes() {
-    for (Requisicao requisicao : filaRequisicoes) {
-      if (requisicao.isAtendida()) {
-        System.out
-            .print("Requisição: " + requisicao.getIdRequisicao() + " - Cliente: " + requisicao.getCliente().getNome()
-                + " - Número de pessoas: " + requisicao.getNumeroDePessoas() + " - Data e hora de entrada: "
-                + requisicao.getDataHoraEntrada().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))
-                + " - Atendida: " + requisicao.isAtendida() + " - Conta: R$ " + requisicao.getConta());
-        if (requisicao.getDataHoraSaida() != null) {
-          System.out.println(" Data e hora de saída: "
-              + requisicao.getDataHoraSaida().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
-        } else {
-          System.out.println(" - Mesa: " + requisicao.getMesa().getIdMesa());
-        }
-      } else {
-        System.out
-            .println("Requisição: " + requisicao.getIdRequisicao() + " - Cliente: " + requisicao.getCliente().getNome()
-                + " - Número de pessoas: " + requisicao.getNumeroDePessoas() + " - Data e hora de entrada: "
-                + requisicao.getDataHoraEntrada().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))
-                + " - Atendida: " + requisicao.isAtendida());
-      }
+  public String printListaRequisicoes() {
+    StringBuilder resultado = new StringBuilder("Requisições: \n");
+    for(Requisicao req : filaRequisicoes){
+      resultado.append(req.toString()+"\n");
     }
+    return resultado.toString();
   }
+  
 
   public void printPedidos(int idMesa) {
     for (Mesa mesa : mesas) {
