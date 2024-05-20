@@ -13,6 +13,7 @@ public class Requisicao {
     private boolean atendida;
     private double conta;
     private List<Pedido> pedidos;
+    private boolean pago;
 
     public Requisicao(int idRequisicao, Cliente cliente, Mesa mesa, int numPessoas, LocalDateTime dataHoraEntrada) {
         this.idRequisicao = idRequisicao;
@@ -24,6 +25,7 @@ public class Requisicao {
         this.atendida = false;
         this.conta = 0.0;
         this.pedidos = new ArrayList<>();
+        this.pago = false;
     }
 
     public int getIdRequisicao() {
@@ -113,7 +115,40 @@ public class Requisicao {
             dataHoraSaida = LocalDateTime.now();
         }
     }
+
     public boolean clienteSentado() {
         return cliente != null;
+    }
+
+    public void pagarConta() {
+        this.pago = true;
+        this.pedidos.clear();
+    }
+
+    public double totalDaConta(Cardapio cardapio) {
+        double total = 0.0;
+        for (Pedido pedido : pedidos) {
+            ItemCardapio item = cardapio.obterItemPorID(pedido.getIdItem());
+            if (item != null) {
+                total += item.getPreco() * pedido.getQuantidade();
+            }
+        }
+        return total;
+    }
+
+    @Override
+    public String toString() {
+        return "Requisicao{" +
+            "idRequisicao=" + idRequisicao +
+            ", cliente=" + cliente.getNome() +
+            ", mesa=" + (mesa != null ? mesa.getIdMesa() : "Nenhuma") +
+            ", numPessoas=" + numPessoas +
+            ", dataHoraEntrada=" + dataHoraEntrada +
+            ", dataHoraSaida=" + dataHoraSaida +
+            ", atendida=" + atendida +
+            ", conta=" + conta +
+            ", pedidos=" + pedidos.size() +
+            ", pago=" + pago +
+        '}';
     }
 }
