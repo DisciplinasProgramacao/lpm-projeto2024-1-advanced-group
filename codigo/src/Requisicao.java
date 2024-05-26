@@ -97,7 +97,10 @@ public class Requisicao {
     }
 
     public void adicionarPedido(Pedido pedido) {
-        pedidos.add(pedido);
+        if(!pago){  
+            pedidos.add(pedido);
+        }
+        
     }
 
     public long calcularDuracao() {
@@ -122,7 +125,6 @@ public class Requisicao {
 
     public void pagarConta() {
         this.pago = true;
-        this.pedidos.clear();
     }
 
     public double totalDaConta(Cardapio cardapio) {
