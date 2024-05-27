@@ -32,8 +32,7 @@ public class Requisicao {
 
     public Requisicao() {}
 
-    public Requisicao(int idRequisicao, Cliente cliente, Mesa mesa, int numPessoas, LocalDateTime dataHoraEntrada) {
-        this.idRequisicao = idRequisicao;
+    public Requisicao(Cliente cliente, Mesa mesa, int numPessoas, LocalDateTime dataHoraEntrada) {
         this.cliente = cliente;
         this.mesa = mesa;
         this.numPessoas = numPessoas;
@@ -174,7 +173,7 @@ public class Requisicao {
                 ", numPessoas=" + numPessoas +
                 ", dataHoraEntrada=" + dataHoraEntrada +
                 ", dataHoraSaida=" + dataHoraSaida +
-                ", atendida=" + atendida +
+                ", atendida=" + (atendida ? "Sim" : "Não") +
                 ", conta=" + conta +
                 ", pedidos=" + pedidos.size() +
                 ", pago=" + pago +
