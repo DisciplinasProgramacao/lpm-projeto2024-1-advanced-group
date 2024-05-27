@@ -127,16 +127,16 @@ public class Requisicao {
         this.pago = true;
     }
 
-    public double totalDaConta(Cardapio cardapio) {
-        double total = 0.0;
-        for (Pedido pedido : pedidos) {
-            ItemCardapio item = cardapio.obterItemPorID(pedido.getIdItem());
-            if (item != null) {
-                total += item.getPreco() * pedido.getQuantidade();
-            }
-        }
-        return total;
-    }
+   // public double totalDaConta(Cardapio cardapio) {
+   //     double total = 0.0;
+     //   for (Pedido pedido : pedidos) {
+       //     ItemCardapio item = cardapio.obterItemPorID(pedido.getIdItem());
+         //   if (item != null) {
+           //     total += item.getPreco() * pedido.getQuantidade();
+           // }
+      //  }
+      //  return total;
+   // }
 
     @Override
     public String toString() {
