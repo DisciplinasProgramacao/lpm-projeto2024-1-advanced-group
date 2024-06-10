@@ -73,6 +73,10 @@ public class InitializeRestauranteRunner implements CommandLineRunner {
             menuMesas(sc);
             break;
 
+          case 4:
+            menuCardapio(sc);
+            break;
+
           case 0:
             System.out.println("Saindo...");
             sair = true;
@@ -202,6 +206,42 @@ public class InitializeRestauranteRunner implements CommandLineRunner {
       case 4:
         handleFecharConta(sc);
         handleAtualizarFila(sc);
+        break;
+
+      case 0:
+        break;
+
+      default:
+        System.out.println("Opção inválida.");
+    }
+  }
+
+  private void menuCardapio(Scanner sc) {
+    System.out.println("=== Menu de Cardápio ===");
+    System.out.println("1 - Listar Itens do Cardápio");
+    System.out.println("2 - Adicionar Item ao Cardápio");
+    System.out.println("3 - Atualizar Item do Cardápio");
+    System.out.println("4 - Deletar Item do Cardápio");
+    System.out.println("0 - Voltar");
+
+    System.out.print("Digite a opção desejada: ");
+    int opcao = Integer.parseInt(String.valueOf(sc.nextLine().charAt(0)));
+
+    switch (opcao) {
+      case 1:
+        handleListarItensCardapio();
+        break;
+
+      case 2:
+        handleAdicionarItemCardapio(sc);
+        break;
+
+      case 3:
+        handleAtualizarItemCardapio(sc);
+        break;
+
+      case 4:
+        handleDeletarItemCardapio(sc);
         break;
 
       case 0:
@@ -410,5 +450,59 @@ public class InitializeRestauranteRunner implements CommandLineRunner {
   }
 
   // FIM MENU MESAS
+
+  // MENU CARDAPIO
+  private void handleListarItensCardapio() {
+    imprimirCardapio();
+  }
+
+  private void handleAdicionarItemCardapio(Scanner sc) {
+    System.out.print("Digite o nome do item: ");
+    String nome = sc.nextLine();
+    System.out.print("Digite o preço do item: ");
+    Double preco = Double.parseDouble(sc.nextLine());
+    System.out.print("É comida no menu fechado? (s/n) ");
+    boolean isComidaNoMenuFechado = sc.nextLine().charAt(0) == 's';
+    System.out.print("É bebida no menu fechado? (s/n) ");
+    boolean isBebidaNoMenuFechado = sc.nextLine().charAt(0) == 's';
+
+    itemCardapioService.insert(new ItemCardapio(null, nome, preco, isComidaNoMenuFechado, isBebidaNoMenuFechado));
+
+    imprimirMensagemDeSucesso();
+  }
+
+  private void handleAtualizarItemCardapio(Scanner sc) {
+    imprimirCardapio();
+    System.out.print("Digite o id do item que deseja atualizar: ");
+    Long id = Long.parseLong(sc.nextLine());
+    ItemCardapio item = itemCardapioService.findById(id).orElseThrow(() -> new RuntimeException("Item não encontrado"));
+
+    System.out.print("Digite o novo nome do item: ");
+    String nome = sc.nextLine();
+    System.out.print("Digite o novo preço do item: ");
+    Double preco = Double.parseDouble(sc.nextLine());
+    System.out.print("É comida no menu fechado? (s/n) ");
+    boolean isComidaNoMenuFechado = sc.nextLine().charAt(0) == 's';
+    System.out.print("É bebida no menu fechado? (s/n) ");
+    boolean isBebidaNoMenuFechado = sc.nextLine().charAt(0) == 's';
+
+    item.setNome(nome);
+    item.setPreco(preco);
+    item.setComidaNoMenuFechado(isComidaNoMenuFechado);
+    item.setBebidaNoMenuFechado(isBebidaNoMenuFechado);
+
+    itemCardapioService.update(id, item);
+
+    imprimirMensagemDeSucesso();
+  }
+
+  private void handleDeletarItemCardapio(Scanner sc) {
+    imprimirCardapio();
+    System.out.print("Digite o id do item que deseja deletar: ");
+    Long id = Long.parseLong(sc.nextLine());
+    itemCardapioService.delete(id);
+
+    imprimirMensagemDeSucesso();
+  }
 
 }
