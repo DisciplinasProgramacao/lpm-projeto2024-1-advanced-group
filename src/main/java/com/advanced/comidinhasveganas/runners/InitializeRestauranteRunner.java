@@ -1,7 +1,7 @@
 package com.advanced.comidinhasveganas.runners;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Scanner;
 
 import org.slf4j.Logger;
@@ -11,12 +11,15 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import com.advanced.comidinhasveganas.dto.ItemRequest;
 import com.advanced.comidinhasveganas.entities.Cliente;
 import com.advanced.comidinhasveganas.entities.Mesa;
+import com.advanced.comidinhasveganas.entities.Pedido;
 import com.advanced.comidinhasveganas.entities.Requisicao;
 import com.advanced.comidinhasveganas.services.ClienteService;
 import com.advanced.comidinhasveganas.services.ItemCardapioService;
 import com.advanced.comidinhasveganas.services.MesaService;
+import com.advanced.comidinhasveganas.services.PedidoItemCardapioService;
 import com.advanced.comidinhasveganas.services.PedidoService;
 import com.advanced.comidinhasveganas.services.RequisicaoService;
 
@@ -39,6 +42,9 @@ public class InitializeRestauranteRunner implements CommandLineRunner {
 
   @Autowired
   private PedidoService pedidoService;
+
+  @Autowired
+  private PedidoItemCardapioService pedidoItemCardapioService;
 
   @Override
   public void run(String... args) throws Exception {
@@ -176,13 +182,16 @@ public class InitializeRestauranteRunner implements CommandLineRunner {
 
     switch (opcao) {
       case 1:
-        for (Mesa mesa : handleListarMesasOcupadas(sc)) {
-          System.out.println(mesa);
-        }
+        handleListarMesasOcupadas(sc).forEach(System.out::println);
         break;
 
       case 2:
-        handleCriarPedido(sc);
+        handleAddItensNoPedido(sc);
+        break;
+
+      case 3:
+        handleFecharConta(sc);
+        handleAtualizarFila(sc);
         break;
 
       case 0:
@@ -208,12 +217,21 @@ public class InitializeRestauranteRunner implements CommandLineRunner {
     return Integer.parseInt(sc.nextLine());
   }
 
+  private Long receberIdDaMesa(Scanner sc) {
+    System.out.print("Digite o id da mesa: ");
+    return Long.parseLong(sc.nextLine());
+  }
+
   private void imprimirMensagemDeSucesso() {
     System.out.println("Sucesso!");
   }
 
   private void imprimirMensagemDeErro() {
     System.out.println("Algo deu errado...");
+  }
+
+  private void imprimirCardapio() {
+    itemCardapioService.findAll().forEach(System.out::println);
   }
 
   // MENU CLIENTES
@@ -289,9 +307,53 @@ public class InitializeRestauranteRunner implements CommandLineRunner {
     return mesaService.findAll().stream().filter(m -> m.isOcupada()).toList();
   }
 
-  private void handleCriarPedido(Scanner sc) {
+  private Pedido handleCriarPedido(Scanner sc) {
+    handleListarMesasOcupadas(sc).forEach(System.out::println);
+    Long mesaId = receberIdDaMesa(sc);
+    mesaService.findById(mesaId).orElseThrow(() -> new RuntimeException("Mesa não encontrada"));
 
+    Requisicao requisicao = requisicaoService.findRequisicaoByMesaId(mesaId)
+        .orElseThrow(() -> new RuntimeException("Requisição não encontrada"));
+
+    Pedido pedido = pedidoService.insert(new Pedido(), requisicao.getId());
+
+    return pedido;
   }
+
+  private ItemRequest handleCriarItemRequest(Scanner sc) {
+    imprimirCardapio();
+    System.out.print("Digite o id do item do cardápio: ");
+    Long itemId = Long.parseLong(sc.nextLine());
+    System.out.print("Digite a quantidade: ");
+    Integer quantidade = Integer.parseInt(sc.nextLine());
+    return new ItemRequest(itemId, quantidade);
+  }
+
+  private void handleAddItensNoPedido(Scanner sc) {
+    List<ItemRequest> itemRequests = new ArrayList<>();
+    Pedido pedido = handleCriarPedido(sc);
+
+    boolean sair = false;
+    while (!sair) {
+      itemRequests.add(handleCriarItemRequest(sc));
+      System.out.print("Deseja adicionar mais itens? (s/n) ");
+      sair = sc.nextLine().charAt(0) == 'n';
+    }
+
+    pedidoItemCardapioService.insertMultiple(pedido.getId(), itemRequests);
+  }
+
+  private void handleFecharConta(Scanner sc) {
+    handleListarMesasOcupadas(sc).forEach(System.out::println);
+    Long mesaId = receberIdDaMesa(sc);
+
+    Requisicao req = requisicaoService.encerrarConta(mesaId);
+
+    System.out.println("Conta fechada com sucesso.");
+    System.out.println("Total da conta: " + req.getTotalConta());
+    System.out.println("Total por pessoa: " + req.getTotalPorPessoa());
+  }
+
   // FIM MENU MESAS
 
 }

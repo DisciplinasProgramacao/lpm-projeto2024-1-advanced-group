@@ -34,7 +34,8 @@ public class PedidoService {
     Requisicao requisicao = requisicaoRepository.findById(idRequisicao)
         .orElseThrow(() -> new RuntimeException("Requisição não encontrada"));
     pedido.setRequisicao(requisicao);
-    return repository.save(pedido);
+    repository.save(pedido);
+    return pedido;
   }
 
   @Transactional
