@@ -53,6 +53,7 @@ public class MesaService {
         .findFirst();
   }
 
+  @Transactional
   public void deleteAll() {
     repository.deleteAll();
   }

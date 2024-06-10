@@ -21,12 +21,9 @@ public class InitializeClientesRunner implements CommandLineRunner {
 
   @Override
   public void run(String... args) throws Exception {
-    if (clienteService.findAll().isEmpty()) {
-      logger.info("Inicializando clientes...");
-      inicializarClientes();
-    } else {
-      logger.info("Clientes já estão inicializados.");
-    }
+    logger.info("Iniciando a tabela de clientes");
+    clienteService.deleteAll();
+    inicializarClientes();
   }
 
   private void inicializarClientes() {

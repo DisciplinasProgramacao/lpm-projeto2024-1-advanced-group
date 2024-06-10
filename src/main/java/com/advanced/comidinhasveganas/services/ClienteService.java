@@ -53,4 +53,9 @@ public class ClienteService {
     entity.setNome(cliente.getNome());
     entity.setTelefone(cliente.getTelefone());
   }
+
+  @Transactional
+  public void deleteAll() {
+    repository.deleteAll();
+  }
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import org.springframework.context.ApplicationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,9 @@ public class InitializeRestauranteRunner implements CommandLineRunner {
   private static final Integer NUMERO_COMIDAS_MENU_FECHADO = 1;
   private static final Integer NUMERO_BEBIDAS_MENU_FECHADO = 2;
   private static final Double PRECO_MENU_FECHADO = 32.0;
+
+  @Autowired
+  private ApplicationContext applicationContext;
 
   @Autowired
   private ClienteService clienteService;
@@ -75,8 +79,6 @@ public class InitializeRestauranteRunner implements CommandLineRunner {
 
           case 4:
             menuCardapio(sc);
-            break;
-
           case 0:
             System.out.println("Saindo...");
             sair = true;
@@ -90,6 +92,9 @@ public class InitializeRestauranteRunner implements CommandLineRunner {
     } catch (Exception e) {
       System.out.println("Ocorreu um erro: " + e.getMessage());
       e.printStackTrace();
+    } finally {
+      logger.info("Restaurante finalizado.");
+      ((AutoCloseable) applicationContext).close();
     }
   }
 
@@ -206,8 +211,6 @@ public class InitializeRestauranteRunner implements CommandLineRunner {
       case 4:
         handleFecharConta(sc);
         handleAtualizarFila(sc);
-        break;
-
       case 0:
         break;
 

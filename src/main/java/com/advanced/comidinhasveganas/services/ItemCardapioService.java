@@ -54,6 +54,7 @@ public class ItemCardapioService {
         .collect(Collectors.joining("\n"));
   }
 
+  @Transactional
   public void deleteAll() {
     repository.deleteAll();
   }
