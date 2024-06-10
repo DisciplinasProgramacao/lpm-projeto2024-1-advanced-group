@@ -105,7 +105,6 @@ public class InitializeRestauranteRunner implements CommandLineRunner {
     System.out.println("2 - Menu de Requisições");
     System.out.println("3 - Menu de Mesas");
     System.out.println("4 - Menu de Cardapio");
-    System.out.println("5 - Financeiro");
     System.out.println("0 - Sair");
     System.out.print("Digite a opção desejada: ");
   }

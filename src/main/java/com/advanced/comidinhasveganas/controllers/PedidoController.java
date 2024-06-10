@@ -23,6 +23,7 @@ import com.advanced.comidinhasveganas.services.ItemCardapioService;
 import com.advanced.comidinhasveganas.services.PedidoItemCardapioService;
 import com.advanced.comidinhasveganas.services.PedidoService;
 import com.advanced.comidinhasveganas.services.RequisicaoService;
+//import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 @RequestMapping("/pedidos")
@@ -89,6 +90,18 @@ public class PedidoController {
 
     return ResponseEntity.ok().body(pedido);
   }
+
+  // @PutMapping("/pedidos/addProduto{idPedido}/{idProduto}")
+  // public String putMethodName(@PathVariable String id, @RequestBody String
+  // entity) {
+  // Pedido ped = pedidoService.findById(idPedido);
+  // ItemCardapio prod = itemCardapioService.findById(idProduto);
+  // ped.adicionarItem(prod);
+
+  // pedidoService.update(idPedido, ped);
+
+  // return entity;
+  // }
 
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(@PathVariable Long id) {

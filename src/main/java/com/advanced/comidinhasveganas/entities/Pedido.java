@@ -57,6 +57,10 @@ public class Pedido {
     return itens;
   }
 
+  public void adicionarItem(PedidoItemCardapio item) {
+    itens.add(item);
+  }
+
   public Double getTotal() {
     return itens.stream().mapToDouble(PedidoItemCardapio::getSubTotal).sum();
   }
