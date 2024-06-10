@@ -1,4 +1,4 @@
-package com.luizpsg.advanced.controllers;
+package com.advanced.controllers;
 
 import java.util.List;
 import java.util.Optional;

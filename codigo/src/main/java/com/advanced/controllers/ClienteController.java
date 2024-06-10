@@ -1,4 +1,4 @@
-package com.luizpsg.advanced.controllers;
+package com.advanced.controllers;
 
 import java.net.URI;
 import java.util.List;
