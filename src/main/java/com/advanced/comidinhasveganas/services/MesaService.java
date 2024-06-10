@@ -52,4 +52,8 @@ public class MesaService {
         .filter(m -> !m.getIsOcupada() && m.getLugares() >= quantidadePessoas)
         .findFirst();
   }
+
+  public void deleteAll() {
+    repository.deleteAll();
+  }
 }

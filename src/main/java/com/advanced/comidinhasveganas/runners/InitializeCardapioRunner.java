@@ -17,9 +17,8 @@ public class InitializeCardapioRunner implements CommandLineRunner {
 
   @Override
   public void run(String... args) throws Exception {
-    if (itemCardapioService.findAll().isEmpty()) {
-      inicializarCardapio();
-    }
+    itemCardapioService.deleteAll();
+    inicializarCardapio();
   }
 
   private void inicializarCardapio() {

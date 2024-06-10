@@ -53,4 +53,8 @@ public class ItemCardapioService {
         .map(ItemCardapio::toString)
         .collect(Collectors.joining("\n"));
   }
+
+  public void deleteAll() {
+    repository.deleteAll();
+  }
 }

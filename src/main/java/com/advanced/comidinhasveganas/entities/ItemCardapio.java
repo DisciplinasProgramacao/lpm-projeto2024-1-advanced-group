@@ -91,7 +91,6 @@ public class ItemCardapio {
 
   @Override
   public String toString() {
-    return "ItemCardapio [id=" + id + ", nome=" + nome + ", preco=" + preco + ", isComidaNoMenuFechado="
-        + isComidaNoMenuFechado + ", isBebidaNoMenuFechado=" + isBebidaNoMenuFechado + "]";
+    return "ItemCardapio [id=" + id + ", nome=" + nome + ", preco=" + preco + "]";
   }
 }

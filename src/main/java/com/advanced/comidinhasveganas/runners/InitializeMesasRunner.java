@@ -17,9 +17,8 @@ public class InitializeMesasRunner implements CommandLineRunner {
 
   @Override
   public void run(String... args) throws Exception {
-    if (mesaService.findAll().isEmpty()) {
-      inicializarMesas();
-    }
+    mesaService.deleteAll();
+    inicializarMesas();
   }
 
   private void inicializarMesas() {
