@@ -79,6 +79,7 @@ public class InitializeRestauranteRunner implements CommandLineRunner {
 
           case 4:
             menuCardapio(sc);
+            break;
           case 0:
             System.out.println("Saindo...");
             sair = true;
