@@ -1,9 +1,9 @@
-package com.luizpsg.advanced.entities.pk;
+package com.advanced.entities.pk;
 
 import java.io.Serializable;
 
-import com.luizpsg.advanced.entities.ItemCardapio;
-import com.luizpsg.advanced.entities.Pedido;
+import com.advanced.entities.ItemCardapio;
+import com.advanced.entities.Pedido;
 
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.JoinColumn;
