@@ -54,28 +54,29 @@ public class Requisicao {
   public Requisicao() {
   }
 
-  public Requisicao(int quantidadePessoas) {
-    this.cliente = new Cliente(null, "Luiz Paulo", "12345678");
+  public Requisicao(int quantidadePessoas, String nome, String telefone) {
+    this.cliente = new Cliente(null, nome, telefone);
     this.quantidadePessoas = quantidadePessoas;
     this.mesa = null;
     this.isAtendida = false;
     this.isFinalizada = false;
-    this.dataHoraInicio = LocalDateTime.now();
+    this.dataHoraInicio = null;
     this.totalConta = 0.0;
     this.totalPorPessoa = 0.0;
   }
 
-  public Requisicao(Cliente cliente, int quantidadePessoas, Mesa mesa, boolean isAtendida,
-      boolean isFinalizada, LocalDateTime dataHoraInicio) {
-    this.cliente = cliente;
-    this.quantidadePessoas = quantidadePessoas;
-    this.mesa = mesa;
-    this.isAtendida = isAtendida;
-    this.isFinalizada = isFinalizada;
-    this.dataHoraInicio = dataHoraInicio;
-    this.totalConta = 0.0;
-    this.totalPorPessoa = 0.0;
-  }
+  // public Requisicao(Cliente cliente, int quantidadePessoas, Mesa mesa, boolean
+  // isAtendida,
+  // boolean isFinalizada, LocalDateTime dataHoraInicio) {
+  // this.cliente = cliente;
+  // this.quantidadePessoas = quantidadePessoas;
+  // this.mesa = mesa;
+  // this.isAtendida = isAtendida;
+  // this.isFinalizada = isFinalizada;
+  // this.dataHoraInicio = dataHoraInicio;
+  // this.totalConta = 0.0;
+  // this.totalPorPessoa = 0.0;
+  // }
 
   public Long getId() {
     return id;

@@ -69,6 +69,14 @@ public class RequisicaoService {
         .findFirst();
   }
 
+  public Requisicao findRequisicaoByTelefoneCliente(String telefone) {
+    Requisicao req = repository.findAll().stream()
+        .filter(r -> r.getCliente().getTelefone().equals(telefone) && !r.isFinalizada())
+        .findFirst().orElse(null);
+
+    return req;
+  }
+
   public Requisicao criarRequisicao(Cliente cliente, int quantidadePessoas) {
     Requisicao requisicao = new Requisicao();
     requisicao.setCliente(cliente);

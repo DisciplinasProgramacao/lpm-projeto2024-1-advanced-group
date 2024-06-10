@@ -53,10 +53,19 @@ public class ClienteService {
     entity.setTelefone(cliente.getTelefone());
   }
 
+  @Transactional
   public Cliente cadastrarCliente(String nome, String telefone) {
     return findByTelefone(telefone).orElseGet(() -> {
       Cliente novoCliente = new Cliente(null, nome, telefone);
       return insert(novoCliente);
     });
+  }
+
+  @Transactional
+  public Cliente updateByTelefone(String telefone, Cliente cliente) {
+    Cliente entity = findByTelefone(telefone)
+        .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
+    updateData(entity, cliente);
+    return repository.save(entity);
   }
 }

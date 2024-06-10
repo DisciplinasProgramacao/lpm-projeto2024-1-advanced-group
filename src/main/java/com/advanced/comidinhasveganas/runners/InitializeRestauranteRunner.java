@@ -1,0 +1,297 @@
+package com.advanced.comidinhasveganas.runners;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.Scanner;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
+
+import com.advanced.comidinhasveganas.entities.Cliente;
+import com.advanced.comidinhasveganas.entities.Mesa;
+import com.advanced.comidinhasveganas.entities.Requisicao;
+import com.advanced.comidinhasveganas.services.ClienteService;
+import com.advanced.comidinhasveganas.services.ItemCardapioService;
+import com.advanced.comidinhasveganas.services.MesaService;
+import com.advanced.comidinhasveganas.services.PedidoService;
+import com.advanced.comidinhasveganas.services.RequisicaoService;
+
+@Component
+@Order(4)
+public class InitializeRestauranteRunner implements CommandLineRunner {
+  private static final Logger logger = LoggerFactory.getLogger(InitializeRestauranteRunner.class);
+
+  @Autowired
+  private ClienteService clienteService;
+
+  @Autowired
+  private RequisicaoService requisicaoService;
+
+  @Autowired
+  private MesaService mesaService;
+
+  @Autowired
+  private ItemCardapioService itemCardapioService;
+
+  @Autowired
+  private PedidoService pedidoService;
+
+  @Override
+  public void run(String... args) throws Exception {
+    logger.info("Inicializando restaurante...");
+    try (Scanner sc = new Scanner(System.in)) {
+      boolean sair = false;
+      while (!sair) {
+        exibirMenu();
+        int opcao = Integer.parseInt(String.valueOf(sc.nextLine().charAt(0)));
+
+        switch (opcao) {
+          case 1:
+            menuClientes(sc);
+            break;
+
+          case 2:
+            menuRequisicoes(sc);
+            break;
+
+          case 3:
+            menuMesas(sc);
+            break;
+
+          case 0:
+            System.out.println("Saindo...");
+            sair = true;
+            break;
+
+          default:
+            System.out.println("Opção inválida.");
+        }
+      }
+
+    } catch (Exception e) {
+      System.out.println("Ocorreu um erro: " + e.getMessage());
+      e.printStackTrace();
+    }
+  }
+
+  private void exibirMenu() {
+    System.out.println("=== Sistema de Gerenciamento de Restaurante ===");
+    System.out.println("1 - Menu de Clientes");
+    System.out.println("2 - Menu de Requisições");
+    System.out.println("3 - Menu de Mesas");
+    System.out.println("4 - Menu de Cardapio");
+    System.out.println("5 - Financeiro");
+    System.out.println("0 - Sair");
+    System.out.print("Digite a opção desejada: ");
+  }
+
+  private void menuClientes(Scanner sc) {
+    System.out.println("=== Menu de Clientes ===");
+    System.out.println("1 - Listar todos os clientes");
+    System.out.println("2 - Buscar cliente por telefone");
+    System.out.println("3 - Inserir novo cliente");
+    System.out.println("4 - Atualizar cliente");
+    System.out.println("5 - Deletar cliente");
+    System.out.println("0 - Voltar");
+    System.out.print("Digite a opção desejada: ");
+
+    int opcao = Integer.parseInt(String.valueOf(sc.nextLine().charAt(0)));
+
+    switch (opcao) {
+      case 1:
+        handleListarTodosClientes();
+        break;
+
+      case 2:
+        String telefone = receberTelefoneString(sc);
+        Cliente cliente = handleBuscarClientePorTelefone(telefone);
+        System.out.println(cliente == null ? "Cliente não encontrado." : "Cliente encontrado: " + cliente);
+        break;
+
+      case 3:
+        handleInserirNovoCliente(sc);
+        break;
+
+      case 4:
+        handleAtualizarCliente(sc);
+        break;
+
+      case 5:
+        handleDeletarCliente(sc);
+        break;
+
+      case 0:
+        break;
+
+      default:
+        System.out.println("Opção inválida.");
+    }
+  }
+
+  private void menuRequisicoes(Scanner sc) {
+    System.out.println("=== Menu de Requisições ===");
+    System.out.println("1 - Criar Requisição");
+    System.out.println("2 - Atualizar Fila de Requisições");
+    System.out.println("3 - Apagar Requisicao");
+    System.out.println("0 - Voltar");
+
+    System.out.print("Digite a opção desejada: ");
+    int opcao = Integer.parseInt(String.valueOf(sc.nextLine().charAt(0)));
+
+    switch (opcao) {
+      case 1:
+        handleCriarRequisicao(sc);
+        handleAtualizarFila(sc);
+        break;
+
+      case 2:
+        handleAtualizarFila(sc);
+        break;
+
+      case 3:
+        handleExcluirRequisicao(sc);
+        break;
+
+      case 0:
+        break;
+
+      default:
+        System.out.println("Opção inválida.");
+    }
+  }
+
+  private void menuMesas(Scanner sc) {
+    System.out.println("=== Menu de Mesas ===");
+    System.out.println("1 - Listar Mesas Ocupadas");
+    System.out.println("2 - Criar Pedido");
+    System.out.println("3 - Fechar Conta");
+    System.out.println("0 - Voltar");
+
+    System.out.print("Digite a opção desejada: ");
+    int opcao = Integer.parseInt(String.valueOf(sc.nextLine().charAt(0)));
+
+    switch (opcao) {
+      case 1:
+        for (Mesa mesa : handleListarMesasOcupadas(sc)) {
+          System.out.println(mesa);
+        }
+        break;
+
+      case 2:
+        handleCriarPedido(sc);
+        break;
+
+      case 0:
+        break;
+
+      default:
+        System.out.println("Opção inválida.");
+    }
+  }
+
+  // Receber coisas
+  private void handleListarTodosClientes() {
+    clienteService.findAll().forEach(System.out::println);
+  }
+
+  private String receberTelefoneString(Scanner sc) {
+    System.out.print("Digite o telefone do cliente: ");
+    return sc.nextLine();
+  }
+
+  private Integer receberQuantidadePessoas(Scanner sc) {
+    System.out.print("Digite a quantidade de pessoas: ");
+    return Integer.parseInt(sc.nextLine());
+  }
+
+  private void imprimirMensagemDeSucesso() {
+    System.out.println("Sucesso!");
+  }
+
+  private void imprimirMensagemDeErro() {
+    System.out.println("Algo deu errado...");
+  }
+
+  // MENU CLIENTES
+  private String receberNomeString(Scanner sc) {
+    System.out.print("Digite o nome do cliente: ");
+    return sc.nextLine();
+  }
+
+  private Cliente handleBuscarClientePorTelefone(String telefone) {
+    return clienteService.findByTelefone(telefone).orElse(null);
+  }
+
+  private void handleInserirNovoCliente(Scanner sc) {
+    clienteService.cadastrarCliente(receberNomeString(sc), receberTelefoneString(sc));
+  }
+
+  private void handleAtualizarCliente(Scanner sc) {
+    String telefone = receberTelefoneString(sc);
+    Cliente cliente = clienteService.findByTelefone(telefone)
+        .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
+    System.out.print("Digite o novo nome do cliente: ");
+    String nome = sc.nextLine();
+    System.out.print("Digite o novo telefone do cliente: ");
+    String telefoneNovo = sc.nextLine();
+    cliente.setNome(nome);
+    cliente.setTelefone(telefoneNovo);
+    clienteService.updateByTelefone(telefone, cliente);
+  }
+
+  private void handleDeletarCliente(Scanner sc) {
+    Long id = clienteService.findByTelefone(receberTelefoneString(sc))
+        .orElseThrow(() -> new RuntimeException("Cliente não encontrado"))
+        .getId();
+    clienteService.delete(id);
+  }
+  // FIM MENU CLIENTES
+
+  // MENU REQUISIÇÕES
+  private void handleCriarRequisicao(Scanner sc) {
+    String telefone = receberTelefoneString(sc);
+    Cliente cliente = handleBuscarClientePorTelefone(telefone);
+
+    if (cliente == null) {
+      cliente = clienteService.cadastrarCliente(receberNomeString(sc), receberTelefoneString(sc));
+      System.out.println("Cliente cadastrado com sucesso." + cliente);
+    } else {
+      System.out.println("Cliente encontrado: " + cliente);
+    }
+
+    Integer quantidadePessoas = receberQuantidadePessoas(sc);
+    requisicaoService.criarRequisicao(cliente, quantidadePessoas);
+  }
+
+  private void handleAtualizarFila(Scanner sc) {
+    requisicaoService.atualizarFilaDeRequisicoes();
+    System.out.println("Fila de requisições atualizada.");
+  }
+
+  private void handleExcluirRequisicao(Scanner sc) {
+    String telefone = receberTelefoneString(sc);
+    Requisicao req = requisicaoService.findRequisicaoByTelefoneCliente(telefone);
+    if (req != null) {
+      requisicaoService.delete(req.getId());
+      imprimirMensagemDeSucesso();
+    } else {
+      imprimirMensagemDeErro();
+    }
+  }
+  // FIM MENU REQUISICOES
+
+  // MENU MESAS
+  private List<Mesa> handleListarMesasOcupadas(Scanner sc) {
+    return mesaService.findAll().stream().filter(m -> m.isOcupada()).toList();
+  }
+
+  private void handleCriarPedido(Scanner sc) {
+
+  }
+  // FIM MENU MESAS
+
+}
