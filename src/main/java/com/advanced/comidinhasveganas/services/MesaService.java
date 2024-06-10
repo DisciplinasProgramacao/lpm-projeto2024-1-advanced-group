@@ -44,12 +44,12 @@ public class MesaService {
 
   private void updateData(Mesa entity, Mesa mesa) {
     entity.setLugares(mesa.getLugares());
-    entity.setOcupada(mesa.isOcupada());
+    entity.setIsOcupada(mesa.getIsOcupada());
   }
 
   public Optional<Mesa> findMesaDisponivel(int quantidadePessoas) {
     return repository.findAll().stream()
-        .filter(m -> !m.isOcupada() && m.getLugares() >= quantidadePessoas)
+        .filter(m -> !m.getIsOcupada() && m.getLugares() >= quantidadePessoas)
         .findFirst();
   }
 }

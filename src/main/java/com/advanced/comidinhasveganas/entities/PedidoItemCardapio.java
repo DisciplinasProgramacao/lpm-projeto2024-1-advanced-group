@@ -1,13 +1,13 @@
 package com.advanced.comidinhasveganas.entities;
 
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+
 import java.io.Serializable;
 
 import com.advanced.comidinhasveganas.entities.pk.PedidoItemCardapioPK;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tb_pedido_item_cardapio")
@@ -41,7 +41,7 @@ public class PedidoItemCardapio implements Serializable {
 
   public void setPedido(Long pedidoId) {
     Pedido pedido = new Pedido();
-    pedido.getId();
+    pedido.setId(pedidoId);
     id.setPedido(pedido);
   }
 
@@ -78,5 +78,4 @@ public class PedidoItemCardapio implements Serializable {
     return getItem().getNome() + ", R$ " + String.format("%.2f", preco) + ", Quantidade: " + quantidade
         + ", Subtotal: R$ " + String.format("%.2f", getSubTotal());
   }
-
 }

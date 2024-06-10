@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +20,7 @@ import com.advanced.comidinhasveganas.services.MesaService;
 
 @RestController
 @RequestMapping("/mesas")
+@Validated
 public class MesaController {
 
   @Autowired
@@ -37,13 +39,13 @@ public class MesaController {
   }
 
   @PostMapping
-  public ResponseEntity<Mesa> insert(@RequestBody Mesa obj) {
+  public ResponseEntity<Mesa> insert(@RequestBody @Validated Mesa obj) {
     obj = mesaService.insert(obj);
     return ResponseEntity.ok().body(obj);
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Mesa> update(@PathVariable Long id, @RequestBody Mesa obj) {
+  public ResponseEntity<Mesa> update(@PathVariable Long id, @RequestBody @Validated Mesa obj) {
     obj = mesaService.update(id, obj);
     return ResponseEntity.ok().body(obj);
   }

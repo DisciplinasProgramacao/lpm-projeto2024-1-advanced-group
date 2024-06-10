@@ -1,10 +1,5 @@
 package com.advanced.comidinhasveganas.entities;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,6 +8,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "tb_pedido")
@@ -58,11 +58,7 @@ public class Pedido {
   }
 
   public Double getTotal() {
-    double sum = 0.0;
-    for (PedidoItemCardapio x : itens) {
-      sum += x.getSubTotal();
-    }
-    return sum;
+    return itens.stream().mapToDouble(PedidoItemCardapio::getSubTotal).sum();
   }
 
   @Override

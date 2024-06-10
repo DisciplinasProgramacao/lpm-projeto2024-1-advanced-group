@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +20,7 @@ import com.advanced.comidinhasveganas.services.ItemCardapioService;
 
 @RestController
 @RequestMapping("/cardapio")
+@Validated
 public class ItemCardapioController {
 
   @Autowired
@@ -37,13 +39,13 @@ public class ItemCardapioController {
   }
 
   @PostMapping
-  public ResponseEntity<ItemCardapio> insert(@RequestBody ItemCardapio obj) {
+  public ResponseEntity<ItemCardapio> insert(@RequestBody @Validated ItemCardapio obj) {
     obj = itemCardapioService.insert(obj);
     return ResponseEntity.ok().body(obj);
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<ItemCardapio> update(@PathVariable Long id, @RequestBody ItemCardapio obj) {
+  public ResponseEntity<ItemCardapio> update(@PathVariable Long id, @RequestBody @Validated ItemCardapio obj) {
     obj = itemCardapioService.update(id, obj);
     return ResponseEntity.ok().body(obj);
   }

@@ -35,17 +35,17 @@ public class Requisicao {
   @JoinColumn(name = "mesa_id")
   private Mesa mesa;
 
-  private boolean isAtendida;
+  private Boolean isAtendida = false;
 
-  private boolean isFinalizada;
+  private Boolean isFinalizada = false;
 
   private LocalDateTime dataHoraInicio;
 
   private LocalDateTime dataHoraFim;
 
-  private Double totalConta;
+  private Double totalConta = 0.0;
 
-  private Double totalPorPessoa;
+  private Double totalPorPessoa = 0.0;
 
   @JsonIgnore
   @OneToMany(mappedBy = "requisicao", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
@@ -58,25 +58,8 @@ public class Requisicao {
     this.cliente = new Cliente(null, nome, telefone);
     this.quantidadePessoas = quantidadePessoas;
     this.mesa = null;
-    this.isAtendida = false;
-    this.isFinalizada = false;
     this.dataHoraInicio = null;
-    this.totalConta = 0.0;
-    this.totalPorPessoa = 0.0;
   }
-
-  // public Requisicao(Cliente cliente, int quantidadePessoas, Mesa mesa, boolean
-  // isAtendida,
-  // boolean isFinalizada, LocalDateTime dataHoraInicio) {
-  // this.cliente = cliente;
-  // this.quantidadePessoas = quantidadePessoas;
-  // this.mesa = mesa;
-  // this.isAtendida = isAtendida;
-  // this.isFinalizada = isFinalizada;
-  // this.dataHoraInicio = dataHoraInicio;
-  // this.totalConta = 0.0;
-  // this.totalPorPessoa = 0.0;
-  // }
 
   public Long getId() {
     return id;
@@ -110,19 +93,19 @@ public class Requisicao {
     this.mesa = mesa;
   }
 
-  public boolean isAtendida() {
+  public Boolean getIsAtendida() {
     return isAtendida;
   }
 
-  public void setAtendida(boolean isAtendida) {
+  public void setIsAtendida(Boolean isAtendida) {
     this.isAtendida = isAtendida;
   }
 
-  public boolean isFinalizada() {
+  public Boolean getIsFinalizada() {
     return isFinalizada;
   }
 
-  public void setFinalizada(boolean isFinalizada) {
+  public void setIsFinalizada(Boolean isFinalizada) {
     this.isFinalizada = isFinalizada;
   }
 
@@ -178,5 +161,4 @@ public class Requisicao {
         + ", dataHoraFim=" + dataHoraFim + ", totalConta=" + totalConta + ", totalPorPessoa=" + totalPorPessoa
         + ", pedidos=" + pedidos + "]";
   }
-
 }

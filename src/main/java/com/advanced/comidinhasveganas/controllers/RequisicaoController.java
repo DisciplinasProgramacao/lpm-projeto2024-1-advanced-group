@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +20,7 @@ import com.advanced.comidinhasveganas.services.RequisicaoService;
 
 @RestController
 @RequestMapping("/requisicoes")
+@Validated
 public class RequisicaoController {
 
   @Autowired
@@ -37,13 +39,13 @@ public class RequisicaoController {
   }
 
   @PostMapping
-  public ResponseEntity<Requisicao> insert(@RequestBody Requisicao obj) {
+  public ResponseEntity<Requisicao> insert(@RequestBody @Validated Requisicao obj) {
     obj = requisicaoService.insert(obj);
     return ResponseEntity.ok().body(obj);
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Requisicao> update(@PathVariable Long id, @RequestBody Requisicao obj) {
+  public ResponseEntity<Requisicao> update(@PathVariable Long id, @RequestBody @Validated Requisicao obj) {
     obj = requisicaoService.update(id, obj);
     return ResponseEntity.ok().body(obj);
   }

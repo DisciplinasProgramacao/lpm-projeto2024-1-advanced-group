@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import com.advanced.comidinhasveganas.dto.ItemRequest;
 import com.advanced.comidinhasveganas.entities.Cliente;
+import com.advanced.comidinhasveganas.entities.ItemCardapio;
 import com.advanced.comidinhasveganas.entities.Mesa;
 import com.advanced.comidinhasveganas.entities.Pedido;
 import com.advanced.comidinhasveganas.entities.Requisicao;
@@ -27,6 +28,10 @@ import com.advanced.comidinhasveganas.services.RequisicaoService;
 @Order(4)
 public class InitializeRestauranteRunner implements CommandLineRunner {
   private static final Logger logger = LoggerFactory.getLogger(InitializeRestauranteRunner.class);
+
+  private static final Integer NUMERO_COMIDAS_MENU_FECHADO = 1;
+  private static final Integer NUMERO_BEBIDAS_MENU_FECHADO = 2;
+  private static final Double PRECO_MENU_FECHADO = 32.0;
 
   @Autowired
   private ClienteService clienteService;
@@ -173,8 +178,9 @@ public class InitializeRestauranteRunner implements CommandLineRunner {
   private void menuMesas(Scanner sc) {
     System.out.println("=== Menu de Mesas ===");
     System.out.println("1 - Listar Mesas Ocupadas");
-    System.out.println("2 - Criar Pedido");
-    System.out.println("3 - Fechar Conta");
+    System.out.println("2 - Criar Pedido Menu Aberto");
+    System.out.println("3 - Criar Pedido Menu Fechado");
+    System.out.println("4 - Fechar Conta");
     System.out.println("0 - Voltar");
 
     System.out.print("Digite a opção desejada: ");
@@ -190,6 +196,10 @@ public class InitializeRestauranteRunner implements CommandLineRunner {
         break;
 
       case 3:
+        handlePedidoMenuFechado(sc);
+        break;
+
+      case 4:
         handleFecharConta(sc);
         handleAtualizarFila(sc);
         break;
@@ -245,7 +255,7 @@ public class InitializeRestauranteRunner implements CommandLineRunner {
   }
 
   private void handleInserirNovoCliente(Scanner sc) {
-    clienteService.cadastrarCliente(receberNomeString(sc), receberTelefoneString(sc));
+    clienteService.insert(new Cliente(null, receberNomeString(sc), receberTelefoneString(sc)));
   }
 
   private void handleAtualizarCliente(Scanner sc) {
@@ -258,7 +268,7 @@ public class InitializeRestauranteRunner implements CommandLineRunner {
     String telefoneNovo = sc.nextLine();
     cliente.setNome(nome);
     cliente.setTelefone(telefoneNovo);
-    clienteService.updateByTelefone(telefone, cliente);
+    clienteService.update(cliente.getId(), cliente);
   }
 
   private void handleDeletarCliente(Scanner sc) {
@@ -275,7 +285,7 @@ public class InitializeRestauranteRunner implements CommandLineRunner {
     Cliente cliente = handleBuscarClientePorTelefone(telefone);
 
     if (cliente == null) {
-      cliente = clienteService.cadastrarCliente(receberNomeString(sc), receberTelefoneString(sc));
+      cliente = clienteService.insert(new Cliente(null, receberNomeString(sc), telefone));
       System.out.println("Cliente cadastrado com sucesso." + cliente);
     } else {
       System.out.println("Cliente encontrado: " + cliente);
@@ -304,7 +314,7 @@ public class InitializeRestauranteRunner implements CommandLineRunner {
 
   // MENU MESAS
   private List<Mesa> handleListarMesasOcupadas(Scanner sc) {
-    return mesaService.findAll().stream().filter(m -> m.isOcupada()).toList();
+    return mesaService.findAll().stream().filter(Mesa::getIsOcupada).toList();
   }
 
   private Pedido handleCriarPedido(Scanner sc) {
@@ -341,6 +351,51 @@ public class InitializeRestauranteRunner implements CommandLineRunner {
     }
 
     pedidoItemCardapioService.insertMultiple(pedido.getId(), itemRequests);
+  }
+
+  private void handlePedidoMenuFechado(Scanner sc) {
+    Pedido pedido = handleCriarPedido(sc);
+
+    List<ItemCardapio> pratosPrincipais = handleListarPratosPrincipaisMenuFechado();
+    List<ItemCardapio> bebidas = handleListarBebidasMenuFechado();
+
+    for (int i = 1; i <= NUMERO_COMIDAS_MENU_FECHADO; i++) {
+      System.out.println("Escolha seu " + i + "º" + " prato principal");
+      pratosPrincipais.forEach(prato -> System.out.println(prato.getId() + " " + prato.getNome()));
+
+      Long comidaId = Long.parseLong(sc.nextLine());
+      ItemCardapio comida = itemCardapioService.findById(comidaId)
+          .orElseThrow(() -> new RuntimeException("Comida não encontrada"));
+
+      if (i == 1) {
+        pedidoItemCardapioService.insert(pedido.getId(), comida.getId(), 1, PRECO_MENU_FECHADO);
+      } else {
+        pedidoItemCardapioService.insert(pedido.getId(), comida.getId(), 1, 0.0);
+      }
+    }
+
+    for (int j = 1; j <= NUMERO_BEBIDAS_MENU_FECHADO; j++) {
+
+      System.out.println("Escolha sua " + j + "ª" + " bebida");
+      bebidas.forEach(bebida -> System.out.println(bebida.getId() + " " + bebida.getNome()));
+
+      Long bebidaId = Long.parseLong(sc.nextLine());
+      ItemCardapio bebida = itemCardapioService.findById(bebidaId)
+          .orElseThrow(() -> new RuntimeException("Bebida não encontrada"));
+
+      pedidoItemCardapioService.insert(pedido.getId(), bebida.getId(), 1, 0.0);
+    }
+
+    System.out.println("Pedido criado com sucesso.");
+
+  }
+
+  private List<ItemCardapio> handleListarPratosPrincipaisMenuFechado() {
+    return itemCardapioService.findAll().stream().filter(ItemCardapio::isComidaNoMenuFechado).toList();
+  }
+
+  private List<ItemCardapio> handleListarBebidasMenuFechado() {
+    return itemCardapioService.findAll().stream().filter(ItemCardapio::isBebidaNoMenuFechado).toList();
   }
 
   private void handleFecharConta(Scanner sc) {

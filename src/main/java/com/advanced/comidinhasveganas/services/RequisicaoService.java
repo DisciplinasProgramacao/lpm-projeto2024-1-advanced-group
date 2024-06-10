@@ -51,8 +51,8 @@ public class RequisicaoService {
   }
 
   private void updateData(Requisicao entity, Requisicao requisicao) {
-    entity.setAtendida(requisicao.isAtendida());
-    entity.setFinalizada(requisicao.isFinalizada());
+    entity.setIsAtendida(requisicao.getIsAtendida());
+    entity.setIsFinalizada(requisicao.getIsFinalizada());
     entity.setMesa(requisicao.getMesa());
     entity.setQuantidadePessoas(requisicao.getQuantidadePessoas());
     entity.setCliente(requisicao.getCliente());
@@ -65,16 +65,15 @@ public class RequisicaoService {
 
   public Optional<Requisicao> findRequisicaoByMesaId(Long mesaId) {
     return repository.findAll().stream()
-        .filter(r -> r.getMesa().getId().equals(mesaId) && !r.isFinalizada())
+        .filter(r -> r.getMesa().getId().equals(mesaId) && !r.getIsFinalizada())
         .findFirst();
   }
 
   public Requisicao findRequisicaoByTelefoneCliente(String telefone) {
-    Requisicao req = repository.findAll().stream()
-        .filter(r -> r.getCliente().getTelefone().equals(telefone) && !r.isFinalizada())
-        .findFirst().orElse(null);
-
-    return req;
+    return repository.findAll().stream()
+        .filter(r -> r.getCliente().getTelefone().equals(telefone) && !r.getIsFinalizada())
+        .findFirst()
+        .orElse(null);
   }
 
   public Requisicao criarRequisicao(Cliente cliente, int quantidadePessoas) {
@@ -87,7 +86,7 @@ public class RequisicaoService {
 
   public void atualizarFilaDeRequisicoes() {
     findAll().stream()
-        .filter(req -> !req.isAtendida())
+        .filter(req -> !req.getIsAtendida())
         .forEach(req -> {
           Mesa mesa = mesaService.findMesaDisponivel(req.getQuantidadePessoas())
               .orElse(null);
@@ -98,9 +97,9 @@ public class RequisicaoService {
   }
 
   private void atribuirMesaARequisicao(Requisicao req, Mesa mesa) {
-    mesa.setOcupada(true);
+    mesa.setIsOcupada(true);
     req.setMesa(mesa);
-    req.setAtendida(true);
+    req.setIsAtendida(true);
     req.setDataHoraInicio(LocalDateTime.now());
     update(req.getId(), req);
     mesaService.update(mesa.getId(), mesa);
@@ -113,24 +112,24 @@ public class RequisicaoService {
 
     double totalConta = req.getPedidos().stream()
         .flatMap(pedido -> pedido.getItens().stream())
-        .mapToDouble(item -> item.getQuantidade() * item.getPreco() * SERVICE_TAX)
+        .mapToDouble(item -> item.getPreco() > 0 ? item.getQuantidade() * item.getPreco() * SERVICE_TAX : 0)
         .sum();
     double totalPorPessoa = totalConta / req.getQuantidadePessoas();
 
     req.setTotalConta(totalConta);
     req.setTotalPorPessoa(totalPorPessoa);
-    req.setFinalizada(true);
+    req.setIsFinalizada(true);
     req.setDataHoraFim(LocalDateTime.now());
     update(req.getId(), req);
 
     Mesa mesa = req.getMesa();
-    mesa.setOcupada(false);
+    mesa.setIsOcupada(false);
     mesaService.update(mesa.getId(), mesa);
     return req;
   }
 
   public boolean isAtendidaEnaoFinalizada(Long requisicaoId) {
     Optional<Requisicao> requisicao = findById(requisicaoId);
-    return requisicao.isPresent() && requisicao.get().isAtendida() && !requisicao.get().isFinalizada();
+    return requisicao.isPresent() && requisicao.get().getIsAtendida() && !requisicao.get().getIsFinalizada();
   }
 }

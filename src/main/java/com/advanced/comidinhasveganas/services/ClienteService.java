@@ -25,13 +25,14 @@ public class ClienteService {
   }
 
   public Optional<Cliente> findByTelefone(String telefone) {
-    return repository.findAll().stream()
-        .filter(c -> c.getTelefone().equals(telefone))
-        .findFirst();
+    return repository.findByTelefone(telefone).stream().findFirst();
   }
 
   @Transactional
   public Cliente insert(Cliente cliente) {
+    if (findByTelefone(cliente.getTelefone()).isPresent()) {
+      throw new RuntimeException("Cliente com este telefone já existe.");
+    }
     return repository.save(cliente);
   }
 
@@ -51,21 +52,5 @@ public class ClienteService {
   private void updateData(Cliente entity, Cliente cliente) {
     entity.setNome(cliente.getNome());
     entity.setTelefone(cliente.getTelefone());
-  }
-
-  @Transactional
-  public Cliente cadastrarCliente(String nome, String telefone) {
-    return findByTelefone(telefone).orElseGet(() -> {
-      Cliente novoCliente = new Cliente(null, nome, telefone);
-      return insert(novoCliente);
-    });
-  }
-
-  @Transactional
-  public Cliente updateByTelefone(String telefone, Cliente cliente) {
-    Cliente entity = findByTelefone(telefone)
-        .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
-    updateData(entity, cliente);
-    return repository.save(entity);
   }
 }

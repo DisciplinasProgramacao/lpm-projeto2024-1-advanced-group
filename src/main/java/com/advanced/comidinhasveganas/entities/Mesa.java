@@ -13,13 +13,15 @@ public class Mesa {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
+
   private Integer lugares;
-  private boolean isOcupada;
+
+  private Boolean isOcupada;
 
   public Mesa() {
   }
 
-  public Mesa(Long id, Integer lugares, boolean isOcupada) {
+  public Mesa(Long id, Integer lugares, Boolean isOcupada) {
     this.id = id;
     this.lugares = lugares;
     this.isOcupada = isOcupada;
@@ -41,11 +43,11 @@ public class Mesa {
     this.lugares = lugares;
   }
 
-  public boolean isOcupada() {
+  public Boolean getIsOcupada() {
     return isOcupada;
   }
 
-  public void setOcupada(boolean isOcupada) {
+  public void setIsOcupada(Boolean isOcupada) {
     this.isOcupada = isOcupada;
   }
 

@@ -2,6 +2,7 @@ package com.advanced.comidinhasveganas.services;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -49,6 +50,19 @@ public class PedidoItemCardapioService {
   }
 
   @Transactional
+  public PedidoItemCardapio insert(Long pedidoId, Long itemId, Integer quantidade, Double preco) {
+    Pedido pedido = pedidoRepository.findById(pedidoId)
+        .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
+
+    ItemCardapio item = itemCardapioRepository.findById(itemId)
+        .orElseThrow(() -> new RuntimeException("Item do cardápio não encontrado"));
+
+    PedidoItemCardapio pedidoItemCardapio = new PedidoItemCardapio(pedido, item, quantidade, preco);
+
+    return repository.save(pedidoItemCardapio);
+  }
+
+  @Transactional
   public List<PedidoItemCardapio> insertMultiple(Long pedidoId, List<ItemRequest> itemRequests) {
     Pedido pedido = pedidoRepository.findById(pedidoId)
         .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
@@ -58,8 +72,9 @@ public class PedidoItemCardapioService {
           ItemCardapio item = itemCardapioRepository.findById(itemRequest.getItemId())
               .orElseThrow(() -> new RuntimeException("Item do cardápio não encontrado"));
           return new PedidoItemCardapio(pedido, item, itemRequest.getQuantidade(), item.getPreco());
-        }).toList();
+        }).collect(Collectors.toList());
 
     return repository.saveAll(pedidoItens);
   }
+
 }
