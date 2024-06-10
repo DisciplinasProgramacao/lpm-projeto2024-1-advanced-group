@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.advanced.comidinhasveganas.entities.Cliente;
+import com.advanced.comidinhasveganas.entities.Mesa;
 import com.advanced.comidinhasveganas.entities.Requisicao;
 import com.advanced.comidinhasveganas.repositories.RequisicaoRepository;
 
