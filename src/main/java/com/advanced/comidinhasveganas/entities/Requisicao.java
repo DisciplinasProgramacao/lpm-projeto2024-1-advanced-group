@@ -1,20 +1,18 @@
 package com.advanced.comidinhasveganas.entities;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -29,44 +27,43 @@ public class Requisicao {
   @JoinColumn(name = "cliente_id")
   private Cliente cliente;
 
-  private int quantidadePessoas;
+  private Integer quantidadePessoas;
 
   @ManyToOne
   @JoinColumn(name = "mesa_id")
-  private Mesa mesa;
+  private Mesa mesa = null;
 
   private Boolean isAtendida = false;
 
   private Boolean isFinalizada = false;
 
-  private LocalDateTime dataHoraInicio;
+  private LocalDateTime dataHoraInicio = null;
 
-  private LocalDateTime dataHoraFim;
+  private LocalDateTime dataHoraFim = null;
 
   private Double totalConta = 0.0;
 
   private Double totalPorPessoa = 0.0;
 
+  @OneToOne
+  private Pedido pedido;
+
+  @ManyToOne
+  @JoinColumn(name = "restaurante_id")
   @JsonIgnore
-  @OneToMany(mappedBy = "requisicao", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-  private List<Pedido> pedidos = new ArrayList<>();
+  private Restaurante restaurante;
 
   public Requisicao() {
   }
 
-  public Requisicao(int quantidadePessoas, String nome, String telefone) {
-    this.cliente = new Cliente(null, nome, telefone);
-    this.quantidadePessoas = quantidadePessoas;
-    this.mesa = null;
-    this.dataHoraInicio = null;
+  public Requisicao(Cliente cliente, Integer quantidadePessoas, Restaurante restaurante) {
+    setCliente(cliente);
+    setQuantidadePessoas(quantidadePessoas);
+    setRestaurante(restaurante);
   }
 
   public Long getId() {
     return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
   }
 
   public Cliente getCliente() {
@@ -77,11 +74,11 @@ public class Requisicao {
     this.cliente = cliente;
   }
 
-  public int getQuantidadePessoas() {
+  public Integer getQuantidadePessoas() {
     return quantidadePessoas;
   }
 
-  public void setQuantidadePessoas(int quantidadePessoas) {
+  public void setQuantidadePessoas(Integer quantidadePessoas) {
     this.quantidadePessoas = quantidadePessoas;
   }
 
@@ -125,19 +122,6 @@ public class Requisicao {
     this.dataHoraFim = dataHoraFim;
   }
 
-  public List<Pedido> getPedidos() {
-    return pedidos;
-  }
-
-  public void setPedidos(List<Pedido> pedidos) {
-    this.pedidos = pedidos;
-  }
-
-  public void addPedido(Pedido pedido) {
-    pedido.setRequisicao(this);
-    this.pedidos.add(pedido);
-  }
-
   public Double getTotalConta() {
     return totalConta;
   }
@@ -154,11 +138,69 @@ public class Requisicao {
     this.totalPorPessoa = totalPorPessoa;
   }
 
+  public Restaurante getRestaurante() {
+    return restaurante;
+  }
+
+  public void setRestaurante(Restaurante restaurante) {
+    this.restaurante = restaurante;
+  }
+
+  public Pedido getPedido() {
+    return pedido;
+  }
+
+  public void setPedido(Pedido pedido) {
+    this.pedido = pedido;
+  }
+
+  public void iniciarRequisicao(Mesa mesa) {
+    this.mesa = mesa;
+    this.dataHoraInicio = LocalDateTime.now();
+    this.isAtendida = true;
+    setPedido(new Pedido());
+  }
+
+  public void finalizarRequisicao() {
+    this.dataHoraFim = LocalDateTime.now();
+    this.isFinalizada = true;
+    this.totalConta = calcularTotal() * restaurante.getTaxaServico();
+    this.totalPorPessoa = totalConta / quantidadePessoas;
+  }
+
+  private Double calcularTotal() {
+    double total = 0.0;
+    List<Long> menuFechadoIds = pedido.getItens().stream()
+        .map(item -> item.getItemCardapio().getCardapio())
+        .filter(cardapio -> cardapio instanceof MenuFechado)
+        .map(Cardapio::getId)
+        .distinct()
+        .collect(Collectors.toList());
+
+    for (ItemPedido item : pedido.getItens()) {
+      if (item.getItemCardapio().getCardapio() instanceof MenuFechado) {
+        Long cardapioId = item.getItemCardapio().getCardapio().getId();
+        if (menuFechadoIds.contains(cardapioId)) {
+          total += ((MenuFechado) item.getItemCardapio().getCardapio()).getPrecoFixo();
+          menuFechadoIds.remove(cardapioId);
+        }
+      } else {
+        total += item.getSubTotal();
+      }
+    }
+    return total;
+  }
+
+  public void cancelarRequisicao() {
+    isFinalizada = true;
+  }
+
   @Override
   public String toString() {
-    return "Requisicao [id=" + id + ", cliente=" + cliente + ", quantidadePessoas=" + quantidadePessoas + ", mesa="
-        + mesa + ", isAtendida=" + isAtendida + ", isFinalizada=" + isFinalizada + ", dataHoraInicio=" + dataHoraInicio
-        + ", dataHoraFim=" + dataHoraFim + ", totalConta=" + totalConta + ", totalPorPessoa=" + totalPorPessoa
-        + ", pedidos=" + pedidos + "]";
+    return "Requisicao [cliente=" + cliente + ", dataHoraFim=" + dataHoraFim + ", dataHoraInicio=" + dataHoraInicio
+        + ", id=" + id + ", isAtendida=" + isAtendida + ", isFinalizada=" + isFinalizada + ", mesa=" + mesa
+        + ", quantidadePessoas=" + quantidadePessoas + ", totalConta=" + totalConta
+        + ", totalPorPessoa=" + totalPorPessoa + "]";
   }
+
 }

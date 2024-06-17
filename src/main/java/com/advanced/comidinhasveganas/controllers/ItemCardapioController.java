@@ -1,10 +1,9 @@
 package com.advanced.comidinhasveganas.controllers;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +18,7 @@ import com.advanced.comidinhasveganas.entities.ItemCardapio;
 import com.advanced.comidinhasveganas.services.ItemCardapioService;
 
 @RestController
-@RequestMapping("/cardapio")
+@RequestMapping("/itens-cardapio")
 public class ItemCardapioController {
 
   @Autowired
@@ -27,47 +26,36 @@ public class ItemCardapioController {
 
   @GetMapping
   public ResponseEntity<List<ItemCardapio>> findAll() {
-    List<ItemCardapio> list = itemCardapioService.findAll();
-    return ResponseEntity.ok().body(list);
+    return ResponseEntity.ok(itemCardapioService.findAll());
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Optional<ItemCardapio>> findById(@PathVariable Long id) {
-    Optional<ItemCardapio> obj = itemCardapioService.findById(id);
-    return ResponseEntity.ok().body(obj);
+  public ResponseEntity<ItemCardapio> findById(@PathVariable Long id) {
+    return ResponseEntity.ok()
+        .body(itemCardapioService.findById(id)
+            .orElseThrow(() -> new RuntimeException("Item de cardápio não encontrado")));
   }
 
   @PostMapping
-  public ResponseEntity<ItemCardapio> insert(@RequestBody ItemCardapio obj) {
-    obj = itemCardapioService.insert(obj);
-    return ResponseEntity.ok().body(obj);
-  }
-
-  @PutMapping("/{id}")
-  public ResponseEntity<ItemCardapio> update(@PathVariable Long id, @RequestBody ItemCardapio obj) {
-    obj = itemCardapioService.update(id, obj);
-    return ResponseEntity.ok().body(obj);
+  public ResponseEntity<ItemCardapio> insert(@RequestBody ItemCardapio itemCardapio) {
+    return ResponseEntity.status(HttpStatus.CREATED).body(itemCardapioService.insert(itemCardapio));
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> delete(@PathVariable Long id) {
-    itemCardapioService.delete(id);
+  public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+    itemCardapioService.deleteById(id);
     return ResponseEntity.noContent().build();
   }
 
-  @GetMapping("/menu-fechado/pratos-principais")
-  public ResponseEntity<List<ItemCardapio>> getPratosPrincipaisMenuFechado() {
-    List<ItemCardapio> pratos = itemCardapioService.findAll().stream()
-        .filter(ItemCardapio::isComidaNoMenuFechado)
-        .collect(Collectors.toList());
-    return ResponseEntity.ok().body(pratos);
+  @PutMapping("/{id}")
+  public ResponseEntity<ItemCardapio> update(@PathVariable Long id, @RequestBody ItemCardapio itemCardapio) {
+    return ResponseEntity.ok(itemCardapioService.update(id, itemCardapio));
   }
 
-  @GetMapping("/menu-fechado/bebidas")
-  public ResponseEntity<List<ItemCardapio>> getBebidasMenuFechado() {
-    List<ItemCardapio> bebidas = itemCardapioService.findAll().stream()
-        .filter(ItemCardapio::isBebidaNoMenuFechado)
-        .collect(Collectors.toList());
-    return ResponseEntity.ok().body(bebidas);
+  @DeleteMapping
+  public ResponseEntity<Void> deleteAll() {
+    itemCardapioService.deleteAll();
+    return ResponseEntity.noContent().build();
   }
+
 }

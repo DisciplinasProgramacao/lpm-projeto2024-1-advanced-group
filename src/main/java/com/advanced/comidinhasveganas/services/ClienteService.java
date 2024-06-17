@@ -8,54 +8,64 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.advanced.comidinhasveganas.entities.Cliente;
+import com.advanced.comidinhasveganas.exceptions.ResourceNotFoundException;
 import com.advanced.comidinhasveganas.repositories.ClienteRepository;
 
 @Service
 public class ClienteService {
 
   @Autowired
-  private ClienteRepository repository;
+  private ClienteRepository clienteRepository;
 
   public List<Cliente> findAll() {
-    return repository.findAll();
+    return clienteRepository.findAll();
   }
 
   public Optional<Cliente> findById(Long id) {
-    return repository.findById(id);
+    return clienteRepository.findById(id);
+  }
+
+  public List<Cliente> findByRestauranteId(Long id) {
+    return clienteRepository.findByRestauranteId(id);
   }
 
   public Optional<Cliente> findByTelefone(String telefone) {
-    return repository.findByTelefone(telefone).stream().findFirst();
+    return clienteRepository.findByTelefone(telefone);
   }
 
   @Transactional
   public Cliente insert(Cliente cliente) {
-    if (findByTelefone(cliente.getTelefone()).isPresent()) {
-      throw new RuntimeException("Cliente com este telefone já existe.");
-    }
-    return repository.save(cliente);
-  }
-
-  @Transactional
-  public void delete(Long id) {
-    repository.deleteById(id);
-  }
-
-  @Transactional
-  public Cliente update(Long id, Cliente cliente) {
-    Cliente entity = repository.findById(id)
-        .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
-    updateData(entity, cliente);
-    return repository.save(entity);
-  }
-
-  private void updateData(Cliente entity, Cliente cliente) {
-    entity.setNome(cliente.getNome());
-    entity.setTelefone(cliente.getTelefone());
+    return clienteRepository.save(cliente);
   }
 
   @Transactional
   public void deleteAll() {
-    repository.deleteAll();
+    clienteRepository.deleteAll();
   }
+
+  @Transactional
+  public void deleteById(Long id) {
+    clienteRepository.deleteById(id);
+  }
+
+  @Transactional
+  public Cliente update(Long id, Cliente cliente) {
+    Cliente entity = clienteRepository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));
+    updateData(entity, cliente);
+    return clienteRepository.save(entity);
+  }
+
+  private void updateData(Cliente entity, Cliente cliente) {
+    if (cliente.getNome() != null) {
+      entity.setNome(cliente.getNome());
+    }
+    if (cliente.getTelefone() != null) {
+      entity.setTelefone(cliente.getTelefone());
+    }
+    if (cliente.getRestaurante() != null) {
+      entity.setRestaurante(cliente.getRestaurante());
+    }
+  }
+
 }

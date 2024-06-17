@@ -1,11 +1,10 @@
 package com.advanced.comidinhasveganas.controllers;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +19,6 @@ import com.advanced.comidinhasveganas.services.RequisicaoService;
 
 @RestController
 @RequestMapping("/requisicoes")
-@Validated
 public class RequisicaoController {
 
   @Autowired
@@ -28,43 +26,40 @@ public class RequisicaoController {
 
   @GetMapping
   public ResponseEntity<List<Requisicao>> findAll() {
-    List<Requisicao> list = requisicaoService.findAll();
-    return ResponseEntity.ok().body(list);
+    return ResponseEntity.ok(requisicaoService.findAll());
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Optional<Requisicao>> findById(@PathVariable Long id) {
-    Optional<Requisicao> obj = requisicaoService.findById(id);
-    return ResponseEntity.ok().body(obj);
+  public ResponseEntity<Requisicao> findById(@PathVariable Long id) {
+    return ResponseEntity.ok()
+        .body(requisicaoService.findById(id).orElseThrow(() -> new RuntimeException("Requisição não encontrada")));
   }
 
   @PostMapping
-  public ResponseEntity<Requisicao> insert(@RequestBody @Validated Requisicao obj) {
-    obj = requisicaoService.insert(obj);
-    return ResponseEntity.ok().body(obj);
-  }
-
-  @PutMapping("/{id}")
-  public ResponseEntity<Requisicao> update(@PathVariable Long id, @RequestBody @Validated Requisicao obj) {
-    obj = requisicaoService.update(id, obj);
-    return ResponseEntity.ok().body(obj);
-  }
-
-  @PutMapping("/atualizarFilaDeRequisicoes")
-  public ResponseEntity<Void> atualizarFilaDeRequisicoes() {
-    requisicaoService.atualizarFilaDeRequisicoes();
-    return ResponseEntity.noContent().build();
-  }
-
-  @PutMapping("/encerrar/{idMesa}")
-  public ResponseEntity<Requisicao> encerrarConta(@PathVariable Long idMesa) {
-    Requisicao req = requisicaoService.encerrarConta(idMesa);
-    return ResponseEntity.ok().body(req);
+  public ResponseEntity<Requisicao> insert(@RequestBody Requisicao requisicao) {
+    return ResponseEntity.status(HttpStatus.CREATED).body(requisicaoService.insert(requisicao));
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> delete(@PathVariable Long id) {
-    requisicaoService.delete(id);
+  public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+    requisicaoService.deleteById(id);
     return ResponseEntity.noContent().build();
   }
+
+  @PutMapping("/{id}")
+  public ResponseEntity<Requisicao> update(@PathVariable Long id, @RequestBody Requisicao requisicao) {
+    return ResponseEntity.ok(requisicaoService.update(id, requisicao));
+  }
+
+  @PutMapping("/alocarMesa/{id}/{numMesa}")
+  public ResponseEntity<Requisicao> alocarMesa(@PathVariable Long id, @RequestBody Requisicao requisicao) {
+    return ResponseEntity.ok(requisicaoService.alocarMesa(idReq, numMesa));
+  }
+
+  @DeleteMapping
+  public ResponseEntity<Void> deleteAll() {
+    requisicaoService.deleteAll();
+    return ResponseEntity.noContent().build();
+  }
+
 }

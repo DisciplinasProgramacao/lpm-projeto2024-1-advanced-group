@@ -1,11 +1,10 @@
 package com.advanced.comidinhasveganas.controllers;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +19,6 @@ import com.advanced.comidinhasveganas.services.MesaService;
 
 @RestController
 @RequestMapping("/mesas")
-@Validated
 public class MesaController {
 
   @Autowired
@@ -28,31 +26,34 @@ public class MesaController {
 
   @GetMapping
   public ResponseEntity<List<Mesa>> findAll() {
-    List<Mesa> list = mesaService.findAll();
-    return ResponseEntity.ok().body(list);
+    return ResponseEntity.ok(mesaService.findAll());
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Optional<Mesa>> findById(@PathVariable Long id) {
-    Optional<Mesa> obj = mesaService.findById(id);
-    return ResponseEntity.ok().body(obj);
+  public ResponseEntity<Mesa> findById(@PathVariable Long id) {
+    return ResponseEntity.ok()
+        .body(mesaService.findById(id).orElseThrow(() -> new RuntimeException("Mesa não encontrada")));
   }
 
   @PostMapping
-  public ResponseEntity<Mesa> insert(@RequestBody @Validated Mesa obj) {
-    obj = mesaService.insert(obj);
-    return ResponseEntity.ok().body(obj);
-  }
-
-  @PutMapping("/{id}")
-  public ResponseEntity<Mesa> update(@PathVariable Long id, @RequestBody @Validated Mesa obj) {
-    obj = mesaService.update(id, obj);
-    return ResponseEntity.ok().body(obj);
+  public ResponseEntity<Mesa> insert(@RequestBody Mesa mesa) {
+    return ResponseEntity.status(HttpStatus.CREATED).body(mesaService.insert(mesa));
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> delete(@PathVariable Long id) {
-    mesaService.delete(id);
+  public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+    mesaService.deleteById(id);
+    return ResponseEntity.noContent().build();
+  }
+
+  @PutMapping("/{id}")
+  public ResponseEntity<Mesa> update(@PathVariable Long id, @RequestBody Mesa mesa) {
+    return ResponseEntity.ok(mesaService.update(id, mesa));
+  }
+
+  @DeleteMapping
+  public ResponseEntity<Void> deleteAll() {
+    mesaService.deleteAll();
     return ResponseEntity.noContent().build();
   }
 }

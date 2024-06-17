@@ -2,7 +2,6 @@ package com.advanced.comidinhasveganas.services;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,47 +14,56 @@ import com.advanced.comidinhasveganas.repositories.ItemCardapioRepository;
 public class ItemCardapioService {
 
   @Autowired
-  private ItemCardapioRepository repository;
+  private ItemCardapioRepository itemCardapioRepository;
 
   public List<ItemCardapio> findAll() {
-    return repository.findAll();
+    return itemCardapioRepository.findAll();
   }
 
   public Optional<ItemCardapio> findById(Long id) {
-    return repository.findById(id);
+    return itemCardapioRepository.findById(id);
+  }
+
+  public List<ItemCardapio> findByCardapioId(Long id) {
+    return itemCardapioRepository.findByCardapioId(id);
+  }
+
+  public List<ItemCardapio> findByCardapioRestauranteId(Long id) {
+    return itemCardapioRepository.findByCardapioRestauranteId(id);
   }
 
   @Transactional
-  public ItemCardapio insert(ItemCardapio item) {
-    return repository.save(item);
-  }
-
-  @Transactional
-  public void delete(Long id) {
-    repository.deleteById(id);
-  }
-
-  @Transactional
-  public ItemCardapio update(Long id, ItemCardapio item) {
-    ItemCardapio entity = repository.findById(id)
-        .orElseThrow(() -> new RuntimeException("Item do cardápio não encontrado"));
-    updateData(entity, item);
-    return repository.save(entity);
-  }
-
-  private void updateData(ItemCardapio entity, ItemCardapio item) {
-    entity.setNome(item.getNome());
-    entity.setPreco(item.getPreco());
-  }
-
-  public String imprimirCardapio() {
-    return findAll().stream()
-        .map(ItemCardapio::toString)
-        .collect(Collectors.joining("\n"));
+  public ItemCardapio insert(ItemCardapio itemCardapio) {
+    return itemCardapioRepository.save(itemCardapio);
   }
 
   @Transactional
   public void deleteAll() {
-    repository.deleteAll();
+    itemCardapioRepository.deleteAll();
   }
+
+  @Transactional
+  public void deleteById(Long id) {
+    itemCardapioRepository.deleteById(id);
+  }
+
+  @Transactional
+  public ItemCardapio update(Long id, ItemCardapio itemCardapio) {
+    ItemCardapio entity = itemCardapioRepository.findById(id).get();
+    updateData(entity, itemCardapio);
+    return itemCardapioRepository.save(entity);
+  }
+
+  private void updateData(ItemCardapio entity, ItemCardapio itemCardapio) {
+    if (itemCardapio.getNome() != null) {
+      entity.setNome(itemCardapio.getNome());
+    }
+    if (itemCardapio.getPreco() != null) {
+      entity.setPreco(itemCardapio.getPreco());
+    }
+    if (itemCardapio.getCardapio() != null) {
+      entity.setCardapio(itemCardapio.getCardapio());
+    }
+  }
+
 }

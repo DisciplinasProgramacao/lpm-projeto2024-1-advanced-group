@@ -14,46 +14,46 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.advanced.comidinhasveganas.entities.Pedido;
-import com.advanced.comidinhasveganas.services.PedidoService;
+import com.advanced.comidinhasveganas.entities.Cardapio;
+import com.advanced.comidinhasveganas.services.CardapioService;
 
 @RestController
-@RequestMapping("/pedidos")
-public class PedidoController {
+@RequestMapping("/cardapios")
+public class CardapioController {
 
   @Autowired
-  private PedidoService pedidoService;
+  private CardapioService cardapioService;
 
   @GetMapping
-  public ResponseEntity<List<Pedido>> findAll() {
-    return ResponseEntity.ok(pedidoService.findAll());
+  public ResponseEntity<List<Cardapio>> findAll() {
+    return ResponseEntity.ok(cardapioService.findAll());
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Pedido> findById(@PathVariable Long id) {
+  public ResponseEntity<Cardapio> findById(@PathVariable Long id) {
     return ResponseEntity.ok()
-        .body(pedidoService.findById(id).orElseThrow(() -> new RuntimeException("Pedido não encontrado")));
+        .body(cardapioService.findById(id).orElseThrow(() -> new RuntimeException("Cardápio não encontrado")));
   }
 
   @PostMapping
-  public ResponseEntity<Pedido> insert(@RequestBody Pedido pedido) {
-    return ResponseEntity.status(HttpStatus.CREATED).body(pedidoService.insert(pedido));
+  public ResponseEntity<Cardapio> insert(@RequestBody Cardapio cardapio) {
+    return ResponseEntity.status(HttpStatus.CREATED).body(cardapioService.insert(cardapio));
   }
 
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteById(@PathVariable Long id) {
-    pedidoService.deleteById(id);
+    cardapioService.deleteById(id);
     return ResponseEntity.noContent().build();
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Pedido> update(@PathVariable Long id, @RequestBody Pedido pedido) {
-    return ResponseEntity.ok(pedidoService.update(id, pedido));
+  public ResponseEntity<Cardapio> update(@PathVariable Long id, @RequestBody Cardapio cardapio) {
+    return ResponseEntity.ok(cardapioService.update(id, cardapio));
   }
 
   @DeleteMapping
   public ResponseEntity<Void> deleteAll() {
-    pedidoService.deleteAll();
+    cardapioService.deleteAll();
     return ResponseEntity.noContent().build();
   }
 
