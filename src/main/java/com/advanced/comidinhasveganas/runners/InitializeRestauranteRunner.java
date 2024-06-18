@@ -314,40 +314,57 @@ public class InitializeRestauranteRunner implements CommandLineRunner {
   }
 
   private void finalizarRequisicao(Scanner scanner, Restaurante restaurante) {
-    List<Mesa> mesasOcupadas = restaurante.getMesasOcupadas();
-    if (mesasOcupadas.isEmpty()) {
-      System.out.println("Nenhuma mesa ocupada no momento.");
-      return;
-    }
-
     System.out.println("Mesas Ocupadas:");
-    for (int i = 0; i < mesasOcupadas.size(); i++) {
-      System.out.println(
-          (i + 1) + ". Mesa " + mesasOcupadas.get(i).getId() + " - " + mesasOcupadas.get(i).getLugares() + " lugares");
+    System.out.println(restaurante.relatorioMesasOcupadas());
+  
+    try{
+      System.out.print("\nEscolha uma mesa pelo número: ");
+      int mesaNumero = Integer.parseInt(scanner.nextLine());
+      Requisicao finalizada = restaurante.finalizarRequisicao(mesaNumero);
+      if(finalizada!=null)
+          System.out.println("Requisição finalizada. Total da conta: R$ " + finalizada.getTotalConta());
+      else
+          System.out.println("Esta mesa não tem atendimento em andamento.");
+    }catch(NumberFormatException ne){
+      System.out.print("Somente números são aceitos para as mesas. Tentar novamente? (s/n) ");
+      if(scanner.nextLine().toLowerCase().equals("s"))
+          finalizarRequisicao(scanner, restaurante);
     }
+    
+    // List<Mesa> mesasOcupadas = restaurante.getMesasOcupadas();
+    // if (mesasOcupadas.isEmpty()) {
+    //   System.out.println("Nenhuma mesa ocupada no momento.");
+    //   return;
+    // }
 
-    System.out.print("Escolha uma mesa pelo número: ");
-    int mesaNumero = scanner.nextInt();
-    scanner.nextLine(); // Consume newline
+    // System.out.println("Mesas Ocupadas:");
+    // for (int i = 0; i < mesasOcupadas.size(); i++) {
+    //   System.out.println(
+    //       (i + 1) + ". Mesa " + mesasOcupadas.get(i).getId() + " - " + mesasOcupadas.get(i).getLugares() + " lugares");
+    // }
 
-    if (mesaNumero < 1 || mesaNumero > mesasOcupadas.size()) {
-      System.out.println("Número de mesa inválido.");
-      return;
-    }
+    // System.out.print("Escolha uma mesa pelo número: ");
+    // int mesaNumero = scanner.nextInt();
+    // scanner.nextLine(); // Consume newline
 
-    Mesa mesaSelecionada = mesasOcupadas.get(mesaNumero - 1);
-    Requisicao requisicao = restaurante.getRequisicoes().stream()
-        .filter(r -> r.getMesa().equals(mesaSelecionada))
-        .findFirst()
-        .orElse(null);
+    // if (mesaNumero < 1 || mesaNumero > mesasOcupadas.size()) {
+    //   System.out.println("Número de mesa inválido.");
+    //   return;
+    // }
 
-    if (requisicao == null) {
-      System.out.println("Requisição não encontrada para a mesa selecionada.");
-      return;
-    }
+    // Mesa mesaSelecionada = mesasOcupadas.get(mesaNumero - 1);
+    // Requisicao requisicao = restaurante.getRequisicoes().stream()
+    //     .filter(r -> r.getMesa().equals(mesaSelecionada))
+    //     .findFirst()
+    //     .orElse(null);
 
-    restaurante.finalizarRequisicao(requisicao);
-    System.out.println("Requisição finalizada. Total da conta: R$ " + requisicao.getTotalConta());
+    // if (requisicao == null) {
+    //   System.out.println("Requisição não encontrada para a mesa selecionada.");
+    //   return;
+    // }
+
+    // restaurante.finalizarRequisicao(requisicao);
+    // System.out.println("Requisição finalizada. Total da conta: R$ " + requisicao.getTotalConta());
   }
 
   private void atualizarEPersistirEntidades(Restaurante restaurante) {
