@@ -21,3 +21,48 @@ Requisição sem documentação, sem teste. Sem lógica implementada - Luiz Feli
 Restaurante sem documentação, sem teste. Muitos prints e gets - Eduardo - 7
 
 App só testes - Luiz Paulo e Henrique - 4
+
+## Sprint 2 - Até 19/maio
+
+- Nota de grupo (6 pontos)
+  - Modelo UML atualizado - cardápio e pedidos
+  - Estrutura Spring
+  - Nota individual (14 pontos)	
+    - Implementações cardápio e pedidos
+    - Controllers
+    - Correções anteriores
+
+### Commit 	c1c2b45 (20/05)
+Problemas
+    
+    Classes sem documentação - Todos 
+    Mesa com métodos da requisição (conta)
+	
+Diagrama 2.1 - Pedidos sem métodos addItemCardapio sem parametros, pedido na mesas, sem cardapio - Todos - 2
+	
+Item sem validação de get/set  - Luiz Paulo - 12
+
+Requisição sem item individual, usando Cardapio (é de restaurante) - Luiz Felipe - 11,5
+
+Restaurante com prints - Eduardo - 11,5
+
+Controller Cliente em outra branch. Pedido controller sem update 'individual em outra branch Pedido/Cliente/Requisicao/mesa - Arthur - 8,5
+
+Controller Mesa em outra branch. Requisicao controller em outra branch sem update e outras operacoes - Lucas - 8,5
+
+Correcao do Main - apenas cliente e requisição - Henrique - 7,5
+
+## Sprint 3 - Até 05/junho
+  - Nota de grupo (6 pontos)
+    - Modelo atualizado - menu fechado
+  
+  - Nota individual (14 pontos)	
+    - Implementações menu fechado e app
+    - Correções anteriores
+
+### Commit ea5fe09
+_Dada a confusão feita e refatoração sem aderência aos requisitos e cartões anteriores, esta sprint está avaliada coletivamente. A avaliação pode ser revista após a apresentação da Sprint 4, considerando as atribuições individuais_
+
+Todos:
+- Diagrama 6 - sem menu fechado e misturando controller com modelo - Todos - 3
+- Sem classe restaurante. "jogaram fora" as entidades anteriores. - Todos - 7
