@@ -1,11 +1,7 @@
 package com.advanced.comidinhasveganas.entities;
 
-import com.advanced.comidinhasveganas.entities.enums.TipoItem;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -13,75 +9,113 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+/**
+ * Representa um item de um pedido em um restaurante vegano.
+ * Cada item de pedido tem um ID único, refere-se a um item do cardápio e uma quantidade.
+ */
 @Entity
-@Table(name = "tb_itens_cardapio")
-public class ItemCardapio {
+@Table(name = "tb_itens_pedidos")
+public class ItemPedido {
 
+  /**
+   * Identificador único do item do pedido.
+   */
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  private String nome;
-
-  private Double preco;
-
-  @Enumerated(EnumType.STRING)
-  private TipoItem tipo;
-
+  /**
+   * Item do cardápio ao qual este item de pedido se refere.
+   */
   @ManyToOne
-  @JoinColumn(name = "cardapio_id")
+  @JoinColumn(name = "item_cardapio_id")
   @JsonIgnore
-  private Cardapio cardapio;
+  private ItemCardapio itemCardapio;
 
-  public ItemCardapio() {
+  /**
+   * Quantidade do item do cardápio neste pedido.
+   */
+  private Integer quantidade;
+
+  /**
+   * Construtor padrão.
+   */
+  public ItemPedido() {
   }
 
-  public ItemCardapio(String nome, Double preco, TipoItem tipo, Cardapio cardapio) {
-    this.nome = nome;
-    this.preco = preco;
-    this.tipo = tipo;
-    this.cardapio = cardapio;
+  /**
+   * Construtor para inicializar o item do pedido com um item do cardápio e uma quantidade específicas.
+   *
+   * @param itemCardapio Item do cardápio ao qual este item de pedido se refere.
+   * @param quantidade Quantidade do item do cardápio neste pedido.
+   */
+  public ItemPedido(ItemCardapio itemCardapio, Integer quantidade) {
+    this.itemCardapio = itemCardapio;
+    this.quantidade = quantidade;
   }
 
+  /**
+   * Obtém o identificador único do item do pedido.
+   *
+   * @return Identificador único do item do pedido.
+   */
   public Long getId() {
     return id;
   }
 
-  public String getNome() {
-    return nome;
+  /**
+   * Obtém o item do cardápio ao qual este item de pedido se refere.
+   *
+   * @return Item do cardápio ao qual este item de pedido se refere.
+   */
+  public ItemCardapio getItemCardapio() {
+    return itemCardapio;
   }
 
-  public Double getPreco() {
-    return preco;
+  /**
+   * Define o item do cardápio ao qual este item de pedido se refere.
+   *
+   * @param itemCardapio Item do cardápio ao qual este item de pedido se refere.
+   */
+  public void setItemCardapio(ItemCardapio itemCardapio) {
+    this.itemCardapio = itemCardapio;
   }
 
-  public TipoItem getTipo() {
-    return tipo;
+  /**
+   * Obtém a quantidade do item do cardápio neste pedido.
+   *
+   * @return Quantidade do item do cardápio neste pedido.
+   */
+  public Integer getQuantidade() {
+    return quantidade;
   }
 
-  public Cardapio getCardapio() {
-    return cardapio;
+  /**
+   * Define a quantidade do item do cardápio neste pedido.
+   *
+   * @param quantidade Quantidade do item do cardápio neste pedido.
+   */
+  public void setQuantidade(Integer quantidade) {
+    this.quantidade = quantidade;
   }
 
-  public void setNome(String nome) {
-    this.nome = nome;
+  /**
+   * Calcula o subtotal do item do pedido, multiplicando o preço do item do cardápio pela quantidade.
+   *
+   * @return Subtotal do item do pedido.
+   */
+  @JsonIgnore
+  public Double getSubTotal() {
+    return itemCardapio.getPreco() * quantidade;
   }
 
-  public void setPreco(Double preco) {
-    this.preco = preco;
-  }
-
-  public void setTipo(TipoItem tipo) {
-    this.tipo = tipo;
-  }
-
-  public void setCardapio(Cardapio cardapio) {
-    this.cardapio = cardapio;
-  }
-
+  /**
+   * Retorna uma representação em string do item do pedido.
+   *
+   * @return Uma representação em string do item do pedido.
+   */
   @Override
   public String toString() {
-    return "ItemCardapio [id=" + id + ", nome=" + nome + ", preco=" + preco + ", tipo=" + tipo + ", cardapio="
-        + cardapio + "]";
+    return "ItemPedido [id=" + id + ", itemCardapio=" + itemCardapio + ", quantidade=" + quantidade + "]";
   }
 }
