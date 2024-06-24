@@ -1,4 +1,3 @@
-Aqui está o arquivo `instrucoes_de_uso.md` formatado de maneira contínua para facilitar a cópia e colagem direta no seu repositório:
 
 ```markdown
 # Instruções de Uso para LPM Comidinhas Veganas
