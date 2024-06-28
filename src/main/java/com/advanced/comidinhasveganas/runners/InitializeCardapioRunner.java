@@ -10,6 +10,9 @@ import com.advanced.comidinhasveganas.entities.ItemCardapio;
 import com.advanced.comidinhasveganas.entities.enums.TipoItem;
 import com.advanced.comidinhasveganas.services.ItemCardapioService;
 
+/**
+ * Classe responsável pela inicialização dos dados do cardápio.
+ */
 @Component
 @Order(3)
 public class InitializeCardapioRunner implements CommandLineRunner {
@@ -23,6 +26,9 @@ public class InitializeCardapioRunner implements CommandLineRunner {
     inicializarCardapio();
   }
 
+  /**
+   * Inicializa o cardápio.
+   */
   private void inicializarCardapio() {
     ItemCardapio[] itens = {
         new ItemCardapio("Moqueca de Palmito", 32.0, TipoItem.COMIDA),

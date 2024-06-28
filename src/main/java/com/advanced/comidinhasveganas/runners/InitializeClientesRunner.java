@@ -9,6 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.advanced.comidinhasveganas.entities.Cliente;
 import com.advanced.comidinhasveganas.services.ClienteService;
 
+/**
+ * Classe responsável pela inicialização dos dados dos clientes.
+ */
 @Component
 @Order(2)
 public class InitializeClientesRunner implements CommandLineRunner {
@@ -22,6 +25,9 @@ public class InitializeClientesRunner implements CommandLineRunner {
     inicializarClientes();
   }
 
+  /**
+   * Inicializa os clientes.
+   */
   private void inicializarClientes() {
     Cliente[] clientes = {
         new Cliente("Victor", "1"),

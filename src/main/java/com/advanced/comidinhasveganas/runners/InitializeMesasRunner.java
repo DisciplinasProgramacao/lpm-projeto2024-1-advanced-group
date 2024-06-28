@@ -9,6 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.advanced.comidinhasveganas.entities.Mesa;
 import com.advanced.comidinhasveganas.services.MesaService;
 
+/**
+ * Classe responsável pela inicialização dos dados das mesas.
+ */
 @Component
 @Order(1)
 public class InitializeMesasRunner implements CommandLineRunner {
@@ -22,6 +25,9 @@ public class InitializeMesasRunner implements CommandLineRunner {
     inicializarMesas();
   }
 
+  /**
+   * Inicializa as mesas.
+   */
   private void inicializarMesas() {
     int[] lugaresPorMesa = { 4, 4, 4, 4, 6, 6, 6, 6, 8, 8 };
     for (int lugares : lugaresPorMesa) {
