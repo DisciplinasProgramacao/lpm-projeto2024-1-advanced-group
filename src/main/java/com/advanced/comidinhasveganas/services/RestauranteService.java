@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.advanced.comidinhasveganas.entities.ItemCardapio;
+import com.advanced.comidinhasveganas.entities.Mesa;
+import com.advanced.comidinhasveganas.entities.Requisicao;
 import com.advanced.comidinhasveganas.entities.Restaurante;
 import com.advanced.comidinhasveganas.exceptions.ResourceNotFoundException;
 import com.advanced.comidinhasveganas.repositories.RestauranteRepository;
@@ -16,9 +19,6 @@ public class RestauranteService {
 
   @Autowired
   private RestauranteRepository restauranteRepository;
-
-  @Autowired
-  private PedidoService pedidoService;
 
   public List<Restaurante> findAll() {
     return restauranteRepository.findAll();
@@ -48,39 +48,47 @@ public class RestauranteService {
     Restaurante restaurante = restauranteRepository.findById(restauranteId)
         .orElseThrow(() -> new ResourceNotFoundException("Restaurante não encontrado"));
 
-    restaurante.atualizarRequisicoes(); // Chama o método existente na entidade Restaurante
-    pedidoService.processarRequisicoes(restaurante.getRequisicoes());
+    restaurante.atualizarRequisicoes();
 
-    restauranteRepository.save(restaurante); // Salva as mudanças no banco de dados
+    restauranteRepository.save(restaurante);
+  }
+
+  public List<Mesa> findMesasOcupadas(Long restauranteId) {
+    Restaurante restaurante = restauranteRepository.findById(restauranteId)
+        .orElseThrow(() -> new ResourceNotFoundException("Restaurante não encontrado"));
+
+    return restaurante.getMesasOcupadas();
+  }
+
+  public List<Requisicao> findRequisicoesAtivas(Long restauranteId) {
+    Restaurante restaurante = restauranteRepository.findById(restauranteId)
+        .orElseThrow(() -> new ResourceNotFoundException("Restaurante não encontrado"));
+
+    return restaurante.getRequisicoesAtivas();
+  }
+
+  public List<ItemCardapio> findItensCardapio(Long restauranteId) {
+    Restaurante restaurante = restauranteRepository.findById(restauranteId)
+        .orElseThrow(() -> new ResourceNotFoundException("Restaurante não encontrado"));
+
+    return restaurante.getItensCardapio();
   }
 
   @Transactional
-  public Restaurante update(Long id, Restaurante restaurante) {
-    Restaurante entity = restauranteRepository.findById(id)
+  public Requisicao finalizarRequisicao(Long restauranteId, Long requisicaoId) {
+    Restaurante restaurante = restauranteRepository.findById(restauranteId)
         .orElseThrow(() -> new ResourceNotFoundException("Restaurante não encontrado"));
-    updateData(entity, restaurante);
-    return restauranteRepository.save(entity);
-  }
 
-  private void updateData(Restaurante entity, Restaurante restaurante) {
-    if (restaurante.getNome() != null) {
-      entity.setNome(restaurante.getNome());
+    Requisicao requisicao = restaurante.getRequisicaoPorId(requisicaoId);
+
+    if (requisicao == null) {
+      throw new ResourceNotFoundException("Requisição não encontrada");
     }
-    if (restaurante.getEndereco() != null) {
-      entity.setEndereco(restaurante.getEndereco());
-    }
-    if (restaurante.getMesas() != null) {
-      entity.setMesas(restaurante.getMesas());
-    }
-    if (restaurante.getClientes() != null) {
-      entity.setClientes(restaurante.getClientes());
-    }
-    if (restaurante.getRequisicoes() != null) {
-      entity.setRequisicoes(restaurante.getRequisicoes());
-    }
-    if (restaurante.getCardapios() != null) {
-      entity.setCardapios(restaurante.getCardapios());
-    }
+
+    restaurante.finalizarRequisicao(requisicao);
+
+    restauranteRepository.save(restaurante);
+    return requisicao;
   }
 
 }

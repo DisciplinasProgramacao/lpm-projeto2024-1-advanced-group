@@ -2,14 +2,24 @@ package com.advanced.comidinhasveganas.entities;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import com.advanced.comidinhasveganas.dto.ItemPedidoDTO;
+import com.advanced.comidinhasveganas.exceptions.ResourceNotFoundException;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
+/**
+ * Entidade que representa um restaurante.
+ */
 @Entity
 @Table(name = "tb_restaurantes")
 public class Restaurante {
@@ -24,17 +34,21 @@ public class Restaurante {
 
   private String endereco;
 
-  @OneToMany(mappedBy = "restaurante")
+  @OneToMany
+  @JoinColumn(name = "restaurante_id")
   private List<Mesa> mesas = new ArrayList<>();
 
-  @OneToMany(mappedBy = "restaurante")
+  @OneToMany
+  @JoinColumn(name = "restaurante_id")
   private List<Cliente> clientes = new ArrayList<>();
 
-  @OneToMany(mappedBy = "restaurante")
+  @OneToMany
+  @JoinColumn(name = "restaurante_id")
   private List<Requisicao> requisicoes = new ArrayList<>();
 
-  @OneToMany(mappedBy = "restaurante")
-  private List<Cardapio> cardapios = new ArrayList<>();
+  @OneToMany
+  @JoinColumn(name = "restaurante_id")
+  private List<ItemCardapio> itensCardapio = new ArrayList<>();
 
   public Restaurante() {
   }
@@ -92,79 +106,237 @@ public class Restaurante {
     return this.requisicoes = requisicoes;
   }
 
-  public List<Cardapio> getCardapios() {
-    return cardapios;
+  public List<ItemCardapio> getItensCardapio() {
+    return itensCardapio;
   }
 
-  public void setCardapios(List<Cardapio> cardapios) {
-    this.cardapios = cardapios;
+  /**
+   * Adiciona um item ao cardápio.
+   * 
+   * @param itemCardapio O item a ser adicionado.
+   */
+  public void addItemCardapio(ItemCardapio itemCardapio) {
+    itensCardapio.add(itemCardapio);
   }
 
+  /**
+   * Remove um item do cardápio.
+   * 
+   * @param itemCardapio O item a ser removido.
+   */
+  public void removeItemCardapio(ItemCardapio itemCardapio) {
+    itensCardapio.remove(itemCardapio);
+  }
+
+  /**
+   * Adiciona uma mesa ao restaurante.
+   * 
+   * @param mesa A mesa a ser adicionada.
+   */
   public void addMesa(Mesa mesa) {
     mesas.add(mesa);
   }
 
+  /**
+   * Remove uma mesa do restaurante.
+   * 
+   * @param mesa A mesa a ser removida.
+   */
   public void removeMesa(Mesa mesa) {
     mesas.remove(mesa);
   }
 
-  public Cliente getClienteByTelefone(String telefone) {
-    return clientes.stream().filter(c -> c.getTelefone().equals(telefone)).findFirst().orElse(null);
+  /**
+   * Obtém um cliente pelo telefone.
+   * 
+   * @param telefone O telefone do cliente.
+   * @return Um Optional contendo o cliente, se encontrado.
+   */
+  public Optional<Cliente> getClienteByTelefone(String telefone) {
+    return clientes.stream().filter(c -> c.getTelefone().equals(telefone)).findFirst();
   }
 
+  /**
+   * Adiciona um cliente ao restaurante.
+   * 
+   * @param cliente O cliente a ser adicionado.
+   */
   public void addCliente(Cliente cliente) {
     clientes.add(cliente);
   }
 
+  /**
+   * Remove um cliente do restaurante.
+   * 
+   * @param cliente O cliente a ser removido.
+   */
   public void removeCliente(Cliente cliente) {
     clientes.remove(cliente);
   }
 
+  /**
+   * Adiciona uma requisição ao restaurante.
+   * 
+   * @param requisicao A requisição a ser adicionada.
+   */
   public void addRequisicao(Requisicao requisicao) {
     requisicoes.add(requisicao);
   }
 
+  /**
+   * Remove uma requisição do restaurante.
+   * 
+   * @param requisicao A requisição a ser removida.
+   */
   public void removeRequisicao(Requisicao requisicao) {
     requisicoes.remove(requisicao);
   }
 
-  public void addCardapio(Cardapio cardapio) {
-    cardapios.add(cardapio);
+  /**
+   * Filtra a lista de requisições com base em um predicado.
+   * 
+   * @param predicate O predicado para filtrar as requisições.
+   * @return A lista de requisições filtradas.
+   */
+  private List<Requisicao> filtrarRequisicoes(Predicate<Requisicao> predicate) {
+    return requisicoes.stream().filter(predicate).collect(Collectors.toList());
   }
 
-  public void removeCardapio(Cardapio cardapio) {
-    cardapios.remove(cardapio);
-  }
-
+  /**
+   * Obtém as requisições que não foram atendidas.
+   * 
+   * @return A lista de requisições não atendidas.
+   */
   public List<Requisicao> getRequisicoesNaoAtendidas() {
-    return requisicoes.stream().filter(r -> !r.getIsAtendida()).toList();
+    return filtrarRequisicoes(r -> !r.getIsAtendida());
   }
 
+  /**
+   * Obtém as requisições que foram atendidas.
+   * 
+   * @return A lista de requisições atendidas.
+   */
+  public List<Requisicao> getRequisicoesAtendidas() {
+    return filtrarRequisicoes(Requisicao::getIsAtendida);
+  }
+
+  /**
+   * Obtém as requisições que não foram finalizadas.
+   * 
+   * @return A lista de requisições não finalizadas.
+   */
   public List<Requisicao> getRequisicoesNaoFinalizadas() {
-    return requisicoes.stream().filter(r -> !r.getIsFinalizada()).toList();
+    return filtrarRequisicoes(r -> !r.getIsFinalizada());
   }
 
+  /**
+   * Obtém as requisições que foram finalizadas.
+   * 
+   * @return A lista de requisições finalizadas.
+   */
+  public List<Requisicao> getRequisicoesFinalizadas() {
+    return filtrarRequisicoes(Requisicao::getIsFinalizada);
+  }
+
+  /**
+   * Obtém as requisições ativas (atendidas e não finalizadas).
+   * 
+   * @return A lista de requisições ativas.
+   */
+  public List<Requisicao> getRequisicoesAtivas() {
+    return filtrarRequisicoes(r -> !r.getIsFinalizada() && r.getIsAtendida());
+  }
+
+  /**
+   * Obtém uma requisição pelo seu ID.
+   * 
+   * @param id O ID da requisição.
+   * @return A requisição correspondente, ou null se não encontrada.
+   */
+  public Requisicao getRequisicaoPorId(Long id) {
+    return requisicoes.stream().filter(r -> r.getId().equals(id)).findFirst().orElse(null);
+  }
+
+  /**
+   * Obtém uma requisição pelo ID da mesa.
+   * 
+   * @param mesaId O ID da mesa.
+   * @return A requisição correspondente, ou null se não encontrada.
+   */
+  public Requisicao getRequisicaoPorMesaId(Long mesaId) {
+    return requisicoes.stream().filter(r -> r.getMesa().getId().equals(mesaId) && !r.getIsFinalizada()).findFirst()
+        .orElse(null);
+  }
+
+  /**
+   * Filtra a lista de mesas com base em um predicado.
+   * 
+   * @param predicate O predicado para filtrar as mesas.
+   * @return A lista de mesas filtradas.
+   */
+  private List<Mesa> filtrarMesas(Predicate<Mesa> predicate) {
+    return mesas.stream().filter(predicate).collect(Collectors.toList());
+  }
+
+  /**
+   * Obtém as mesas disponíveis.
+   * 
+   * @return A lista de mesas disponíveis.
+   */
   public List<Mesa> getMesasDisponiveis() {
-    return mesas.stream().filter(m -> !m.getIsOcupada()).toList();
+    return filtrarMesas(m -> !m.getIsOcupada());
   }
 
+  /**
+   * Obtém as mesas ocupadas.
+   * 
+   * @return A lista de mesas ocupadas.
+   */
   public List<Mesa> getMesasOcupadas() {
-    return mesas.stream().filter(m -> m.getIsOcupada()).toList();
+    return filtrarMesas(Mesa::getIsOcupada);
   }
 
+  /**
+   * Atualiza as requisições, associando mesas disponíveis às requisições não
+   * atendidas.
+   */
   public void atualizarRequisicoes() {
     getRequisicoesNaoAtendidas().forEach(req -> {
-      getMesasDisponiveis().stream().filter(m -> m.getLugares() >= req.getQuantidadePessoas()).findFirst()
-          .ifPresent(mesa -> {
-            req.iniciarRequisicao(mesa);
-            mesa.ocupar();
-          });
+      getMesasDisponiveis().stream()
+          .filter(m -> m.cabe(req.getQuantidadePessoas()))
+          .findFirst()
+          .ifPresent(mesa -> req.iniciarRequisicao(mesa));
     });
   }
 
+  /**
+   * Cria uma lista de itens de pedido a partir de uma lista de DTOs.
+   * 
+   * @param itensDTO A lista de DTOs dos itens de pedido.
+   * @return A lista de itens de pedido correspondentes.
+   */
+  public List<ItemPedido> criarItensPedido(List<ItemPedidoDTO> itensDTO) {
+    return itensDTO.stream()
+        .map(itemDTO -> {
+          Long itemId = itemDTO.getItemId();
+          Integer quantidade = itemDTO.getQuantidade();
+
+          return getItensCardapio().stream()
+              .filter(item -> item.getId().equals(itemId))
+              .findFirst()
+              .map(item -> new ItemPedido(item, quantidade))
+              .orElseThrow(() -> new ResourceNotFoundException("Item de cardápio não encontrado"));
+        })
+        .collect(Collectors.toList());
+  }
+
+  /**
+   * Finaliza uma requisição.
+   * 
+   * @param requisicao A requisição a ser finalizada.
+   */
   public void finalizarRequisicao(Requisicao requisicao) {
     requisicao.finalizarRequisicao();
-    requisicao.getMesa().desocupar();
   }
 
   @Override

@@ -1,15 +1,21 @@
 package com.advanced.comidinhasveganas.services;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.advanced.comidinhasveganas.dto.ItemPedidoDTO;
+import com.advanced.comidinhasveganas.entities.ItemPedido;
+import com.advanced.comidinhasveganas.entities.Pedido;
 import com.advanced.comidinhasveganas.entities.Requisicao;
+import com.advanced.comidinhasveganas.entities.Restaurante;
 import com.advanced.comidinhasveganas.exceptions.ResourceNotFoundException;
+import com.advanced.comidinhasveganas.repositories.ItemPedidoRepository;
+import com.advanced.comidinhasveganas.repositories.PedidoRepository;
 import com.advanced.comidinhasveganas.repositories.RequisicaoRepository;
+import com.advanced.comidinhasveganas.repositories.RestauranteRepository;
 
 @Service
 public class RequisicaoService {
@@ -17,16 +23,22 @@ public class RequisicaoService {
   @Autowired
   private RequisicaoRepository requisicaoRepository;
 
+  @Autowired
+  private RestauranteRepository restauranteRepository;
+
+  @Autowired
+  private PedidoRepository pedidoRepository;
+
+  @Autowired
+  private ItemPedidoRepository itemPedidoRepository;
+
   public List<Requisicao> findAll() {
     return requisicaoRepository.findAll();
   }
 
-  public Optional<Requisicao> findById(Long id) {
-    return requisicaoRepository.findById(id);
-  }
-
-  public List<Requisicao> findByRestauranteId(Long id) {
-    return requisicaoRepository.findByRestauranteId(id);
+  public Requisicao findById(Long id) {
+    return requisicaoRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Requisição não encontrada"));
   }
 
   @Transactional
@@ -44,51 +56,28 @@ public class RequisicaoService {
     requisicaoRepository.deleteById(id);
   }
 
+  private Restaurante findRestauranteById(Long id) {
+    return restauranteRepository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Restaurante não encontrado"));
+  }
+
   @Transactional
-  public Requisicao alocarMesa(Long id, Requisicao requisicao) {
-    Requisicao entity = requisicaoRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("Requisição não encontrada"));
-    Mesa mesa = mesaRepository.findById(numMesa)
-        .orElseThrow(() -> new ResourceNotFoundException("Mesa não encontrada"));
+  public Requisicao addPedido(Long restauranteId, Long requisicaoId, String tipoPedido,
+      List<ItemPedidoDTO> itensDTO) {
 
-    entity.iniciarRequisicao(mesa);
-    // updateData(entity, requisicao);
-    return requisicaoRepository.save(entity);
+    Restaurante restaurante = findRestauranteById(restauranteId);
+    Requisicao requisicao = findById(requisicaoId);
+
+    List<ItemPedido> itensPedido = restaurante.criarItensPedido(itensDTO);
+    itemPedidoRepository.saveAll(itensPedido);
+
+    Pedido pedido = new Pedido(tipoPedido);
+    pedido.addItens(itensPedido);
+    pedido.setPrecoTotal();
+    pedidoRepository.save(pedido);
+
+    requisicao.addPedido(pedido);
+    return requisicaoRepository.save(requisicao);
   }
 
-  private void updateData(Requisicao entity, Requisicao requisicao) {
-    if (requisicao.getCliente() != null) {
-      entity.setCliente(requisicao.getCliente());
-    }
-    if (requisicao.getQuantidadePessoas() != null) {
-      entity.setQuantidadePessoas(requisicao.getQuantidadePessoas());
-    }
-    if (requisicao.getMesa() != null) {
-      entity.setMesa(requisicao.getMesa());
-    }
-    if (requisicao.getIsAtendida() != null) {
-      entity.setIsAtendida(requisicao.getIsAtendida());
-    }
-    if (requisicao.getIsFinalizada() != null) {
-      entity.setIsFinalizada(requisicao.getIsFinalizada());
-    }
-    if (requisicao.getDataHoraInicio() != null) {
-      entity.setDataHoraInicio(requisicao.getDataHoraInicio());
-    }
-    if (requisicao.getDataHoraFim() != null) {
-      entity.setDataHoraFim(requisicao.getDataHoraFim());
-    }
-    if (requisicao.getTotalConta() != null) {
-      entity.setTotalConta(requisicao.getTotalConta());
-    }
-    if (requisicao.getTotalPorPessoa() != null) {
-      entity.setTotalPorPessoa(requisicao.getTotalPorPessoa());
-    }
-    if (requisicao.getRestaurante() != null) {
-      entity.setRestaurante(requisicao.getRestaurante());
-    }
-    if (requisicao.getPedido() != null) {
-      entity.setPedido(requisicao.getPedido());
-    }
-  }
 }

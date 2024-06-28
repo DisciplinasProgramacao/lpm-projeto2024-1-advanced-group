@@ -24,17 +24,14 @@ public class ItemCardapioService {
     return itemCardapioRepository.findById(id);
   }
 
-  public List<ItemCardapio> findByCardapioId(Long id) {
-    return itemCardapioRepository.findByCardapioId(id);
-  }
-
-  public List<ItemCardapio> findByCardapioRestauranteId(Long id) {
-    return itemCardapioRepository.findByCardapioRestauranteId(id);
-  }
-
   @Transactional
   public ItemCardapio insert(ItemCardapio itemCardapio) {
     return itemCardapioRepository.save(itemCardapio);
+  }
+
+  @Transactional
+  public List<ItemCardapio> insertAll(List<ItemCardapio> itemCardapios) {
+    return itemCardapioRepository.saveAll(itemCardapios);
   }
 
   @Transactional
@@ -45,25 +42,6 @@ public class ItemCardapioService {
   @Transactional
   public void deleteById(Long id) {
     itemCardapioRepository.deleteById(id);
-  }
-
-  @Transactional
-  public ItemCardapio update(Long id, ItemCardapio itemCardapio) {
-    ItemCardapio entity = itemCardapioRepository.findById(id).get();
-    updateData(entity, itemCardapio);
-    return itemCardapioRepository.save(entity);
-  }
-
-  private void updateData(ItemCardapio entity, ItemCardapio itemCardapio) {
-    if (itemCardapio.getNome() != null) {
-      entity.setNome(itemCardapio.getNome());
-    }
-    if (itemCardapio.getPreco() != null) {
-      entity.setPreco(itemCardapio.getPreco());
-    }
-    if (itemCardapio.getCardapio() != null) {
-      entity.setCardapio(itemCardapio.getCardapio());
-    }
   }
 
 }

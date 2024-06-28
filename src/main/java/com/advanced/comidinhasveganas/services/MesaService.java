@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.advanced.comidinhasveganas.entities.Mesa;
-import com.advanced.comidinhasveganas.exceptions.ResourceNotFoundException;
 import com.advanced.comidinhasveganas.repositories.MesaRepository;
 
 @Service
@@ -25,13 +24,14 @@ public class MesaService {
     return mesaRepository.findById(id);
   }
 
-  public List<Mesa> findByRestauranteId(Long id) {
-    return mesaRepository.findByRestauranteId(id);
-  }
-
   @Transactional
   public Mesa insert(Mesa mesa) {
     return mesaRepository.save(mesa);
+  }
+
+  @Transactional
+  public List<Mesa> insertAll(List<Mesa> mesas) {
+    return mesaRepository.saveAll(mesas);
   }
 
   @Transactional
@@ -42,26 +42,6 @@ public class MesaService {
   @Transactional
   public void deleteById(Long id) {
     mesaRepository.deleteById(id);
-  }
-
-  @Transactional
-  public Mesa update(Long id, Mesa mesa) {
-    Mesa entity = mesaRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("Mesa não encontrada"));
-    updateData(entity, mesa);
-    return mesaRepository.save(entity);
-  }
-
-  private void updateData(Mesa entity, Mesa mesa) {
-    if (mesa.getLugares() != null) {
-      entity.setLugares(mesa.getLugares());
-    }
-    if (mesa.getIsOcupada() != null) {
-      entity.setIsOcupada(mesa.getIsOcupada());
-    }
-    if (mesa.getRestaurante() != null) {
-      entity.setRestaurante(mesa.getRestaurante());
-    }
   }
 
 }

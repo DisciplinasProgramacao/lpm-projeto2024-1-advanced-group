@@ -24,10 +24,6 @@ public class ItemPedidoService {
     return itemPedidoRepository.findById(id);
   }
 
-  public List<ItemPedido> findByPedidoRequisicaoRestauranteId(Long restauranteId) {
-    return itemPedidoRepository.findByPedidoRequisicaoRestauranteId(restauranteId);
-  }
-
   @Transactional
   public ItemPedido insert(ItemPedido itemPedido) {
     return itemPedidoRepository.save(itemPedido);
@@ -46,25 +42,6 @@ public class ItemPedidoService {
   @Transactional
   public void deleteById(Long id) {
     itemPedidoRepository.deleteById(id);
-  }
-
-  @Transactional
-  public ItemPedido update(Long id, ItemPedido itemPedido) {
-    ItemPedido entity = itemPedidoRepository.findById(id).get();
-    updateData(entity, itemPedido);
-    return itemPedidoRepository.save(entity);
-  }
-
-  private void updateData(ItemPedido entity, ItemPedido itemPedido) {
-    if (itemPedido.getQuantidade() != null) {
-      entity.setQuantidade(itemPedido.getQuantidade());
-    }
-    if (itemPedido.getPedido() != null) {
-      entity.setPedido(itemPedido.getPedido());
-    }
-    if (itemPedido.getItemCardapio() != null) {
-      entity.setItemCardapio(itemPedido.getItemCardapio());
-    }
   }
 
 }

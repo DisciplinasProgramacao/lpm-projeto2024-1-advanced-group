@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,8 +30,7 @@ public class RequisicaoController {
 
   @GetMapping("/{id}")
   public ResponseEntity<Requisicao> findById(@PathVariable Long id) {
-    return ResponseEntity.ok()
-        .body(requisicaoService.findById(id).orElseThrow(() -> new RuntimeException("Requisição não encontrada")));
+    return ResponseEntity.ok().body(requisicaoService.findById(id));
   }
 
   @PostMapping
@@ -44,16 +42,6 @@ public class RequisicaoController {
   public ResponseEntity<Void> deleteById(@PathVariable Long id) {
     requisicaoService.deleteById(id);
     return ResponseEntity.noContent().build();
-  }
-
-  @PutMapping("/{id}")
-  public ResponseEntity<Requisicao> update(@PathVariable Long id, @RequestBody Requisicao requisicao) {
-    return ResponseEntity.ok(requisicaoService.update(id, requisicao));
-  }
-
-  @PutMapping("/alocarMesa/{id}/{numMesa}")
-  public ResponseEntity<Requisicao> alocarMesa(@PathVariable Long id, @RequestBody Requisicao requisicao) {
-    return ResponseEntity.ok(requisicaoService.alocarMesa(idReq, numMesa));
   }
 
   @DeleteMapping
