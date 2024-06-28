@@ -66,3 +66,25 @@ _Dada a confusão feita e refatoração sem aderência aos requisitos e cartões
 Todos:
 - Diagrama 6 - sem menu fechado e misturando controller com modelo - Todos - 3
 - Sem classe restaurante. "jogaram fora" as entidades anteriores. - Todos - 7
+
+## Sprint 4 - Apresentação em 24/06
+  - Nota de grupo 7/10 pontos
+	  - Modelo atualizado - sem pedido fechado. 
+	  - Apresentação - ok
+    - Runner/App
+	
+  - Nota individual (10 pontos)
+    - Ajustes do último quadro "Projeto GitHub"
+	  - Correções das sprints anteriores
+	
+### Cartões SP4
+
+Restaurante (Lucas/Luiz Paulo): gets em sequencia. atualizar requisicoes com foreach. criar itens pedido com vários. sem tratamento de exceções. 6,5
+
+Requisicao(Eduardo/Luiz Felipe): sets sem validação. Finalizar sem fechar pedido. Calcular totais fazendo 10% (regra do pedido) 6
+
+Pedido (henrique): if para tipo!!! 4
+
+Item/Enum (Arthur): ok, mas não era a tarefa marcada. 5
+
+Runner/App: ok. Mas a modularidade/organização está muito ruim.  
