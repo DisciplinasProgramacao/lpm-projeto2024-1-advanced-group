@@ -89,4 +89,4 @@ Item/Enum (Arthur): ok, mas não era a tarefa marcada. 5
 
 Runner/App: ok. Mas a modularidade/organização está muito ruim.  
 
-**Atualização/revisão PedidoFactory**: (Lucas) na verdade, a implementação é de um Strategy. A entidade "PrecoNormal" está sem a implementação efetiva, sendo somente uma interface. Há uma tentativa de instanciação que, claramente, gera um erro de compilação. Onde está calculado o preco com a regra normal?
+**Atualização/revisão PedidoFactory**: (Lucas) na verdade, a implementação é de um Strategy. A entidade "PrecoNormal" está sem a implementação efetiva, sendo somente uma interface. Há uma tentativa de instanciação que, claramente, gera um erro de compilação. Onde está calculado o preco com a regra normal? + 2
