@@ -13,9 +13,12 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 /**
- * A classe Requisicao representa um pedido feito por um cliente em um restaurante.
- * Ela inclui informações sobre o cliente, mesa, quantidade de pessoas, status do pedido,
- * horários de início e fim, total da conta, total por pessoa e os pedidos realizados.
+ * A classe Requisicao representa um pedido feito por um cliente em um
+ * restaurante.
+ * Ela inclui informações sobre o cliente, mesa, quantidade de pessoas, status
+ * do pedido,
+ * horários de início e fim, total da conta, total por pessoa e os pedidos
+ * realizados.
  */
 @Entity
 @Table(name = "tb_requisicoes")
@@ -58,7 +61,8 @@ public class Requisicao {
   }
 
   /**
-   * Construtor que inicializa a Requisicao com um cliente e quantidade de pessoas.
+   * Construtor que inicializa a Requisicao com um cliente e quantidade de
+   * pessoas.
    *
    * @param cliente           O cliente que fez a requisição.
    * @param quantidadePessoas A quantidade de pessoas na mesa.
@@ -143,7 +147,8 @@ public class Requisicao {
   /**
    * Define se a requisição foi atendida.
    *
-   * @param isAtendida Verdadeiro se a requisição foi atendida, falso caso contrário.
+   * @param isAtendida Verdadeiro se a requisição foi atendida, falso caso
+   *                   contrário.
    */
   public void setIsAtendida(Boolean isAtendida) {
     this.isAtendida = isAtendida;
@@ -168,7 +173,8 @@ public class Requisicao {
   /**
    * Define se a requisição foi finalizada.
    *
-   * @param isFinalizada Verdadeiro se a requisição foi finalizada, falso caso contrário.
+   * @param isFinalizada Verdadeiro se a requisição foi finalizada, falso caso
+   *                     contrário.
    */
   public void setIsFinalizada(Boolean isFinalizada) {
     this.isFinalizada = isFinalizada;
@@ -291,6 +297,7 @@ public class Requisicao {
    * @param pedido O pedido a ser adicionado.
    */
   public void addPedido(Pedido pedido) {
+    pedido.setPrecoTotal(); // Certifique-se de calcular o preço total ao adicionar o pedido
     pedidos.add(pedido);
   }
 
@@ -316,7 +323,8 @@ public class Requisicao {
   }
 
   /**
-   * Finaliza a requisição marcando o horário de fim, calculando os totais e liberando a mesa.
+   * Finaliza a requisição marcando o horário de fim, calculando os totais e
+   * liberando a mesa.
    */
   public void finalizarRequisicao() {
     setDataHoraFimLocal();
