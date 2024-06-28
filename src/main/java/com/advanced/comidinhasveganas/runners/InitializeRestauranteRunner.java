@@ -9,9 +9,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.advanced.comidinhasveganas.entities.Cliente;
+import com.advanced.comidinhasveganas.entities.ItemCardapio;
 import com.advanced.comidinhasveganas.entities.Mesa;
 import com.advanced.comidinhasveganas.entities.Restaurante;
 import com.advanced.comidinhasveganas.services.ClienteService;
+import com.advanced.comidinhasveganas.services.ItemCardapioService;
 import com.advanced.comidinhasveganas.services.MesaService;
 import com.advanced.comidinhasveganas.services.RestauranteService;
 
@@ -28,12 +30,16 @@ public class InitializeRestauranteRunner implements CommandLineRunner {
   @Autowired
   private ClienteService clienteService;
 
+  @Autowired
+  private ItemCardapioService itemCardapioService;
+
   @Override
   @Transactional
   public void run(String... args) throws Exception {
     Restaurante restaurante = inicializarRestaurante("Comidinhas Veganas", "Rua das Flores, 123");
     addMesas(restaurante);
     addClientes(restaurante);
+    addItensCardapio(restaurante);
     restauranteService.insert(restaurante);
   }
 
@@ -49,6 +55,11 @@ public class InitializeRestauranteRunner implements CommandLineRunner {
   private void addClientes(Restaurante restaurante) {
     List<Cliente> clientes = clienteService.findAll();
     clientes.stream().forEach(c -> restaurante.addCliente(c));
+  }
+
+  private void addItensCardapio(Restaurante restaurante) {
+    List<ItemCardapio> itens = itemCardapioService.findAll();
+    itens.stream().forEach(i -> restaurante.addItemCardapio(i));
   }
 
 }

@@ -10,7 +10,7 @@ import com.advanced.comidinhasveganas.entities.Cliente;
 import com.advanced.comidinhasveganas.services.ClienteService;
 
 @Component
-@Order(3) // Definindo a ordem de execução
+@Order(2)
 public class InitializeClientesRunner implements CommandLineRunner {
 
   @Autowired
