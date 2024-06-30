@@ -12,7 +12,10 @@
 ### Commit 2696c50 (08/abr)
 Diagrama 1.0 - Notações de relações, métodos da requisição. - Todos - 6	
 
-Cliente sem documentação, sem teste - Arthur - 4
+Cliente sem documentação, sem teste - Arthur - 
+
+**REVISADO**
+- Testes implementados pelo Arthur na Sprint 4 - Arthur - 6
 
 Mesa sem documentação, sem teste. Muitos get/set sem sentido - Lucas - 4
 
@@ -81,12 +84,18 @@ Todos:
 
 Restaurante (Lucas/Luiz Paulo): gets em sequencia. atualizar requisicoes com foreach. criar itens pedido com vários. sem tratamento de exceções. 6,5
 
+**Atualização/revisão PedidoFactory**: na verdade, a implementação é de um Strategy. A entidade "PrecoNormal" está sem a implementação efetiva, sendo somente uma interface. Há uma tentativa de instanciação que, claramente, gera um erro de compilação. Onde está calculado o preco com a regra normal? Lucas + 2
+
+
 Requisicao(Eduardo/Luiz Felipe): sets sem validação. Finalizar sem fechar pedido. Calcular totais fazendo 10% (regra do pedido) 6
 
-Pedido (henrique): if para tipo!!! 4
+Pedido (henrique): if para tipo!!!
+
+**REVISADO**
+- Melhoria do padrão Strategy pelo Henrique, aumentando a modularidade e complementando a implementação que estava faltando - Henrique - 6
 
 Item/Enum (Arthur): ok, mas não era a tarefa marcada. 5
 
 Runner/App: ok. Mas a modularidade/organização está muito ruim.  
 
-**Atualização/revisão PedidoFactory**: (Lucas) na verdade, a implementação é de um Strategy. A entidade "PrecoNormal" está sem a implementação efetiva, sendo somente uma interface. Há uma tentativa de instanciação que, claramente, gera um erro de compilação. Onde está calculado o preco com a regra normal? + 2
+
